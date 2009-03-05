@@ -43,5 +43,5 @@ int extract_icons(FILE *in, char *inname, bool listmode, ExtractNameGen outfile_
 
 /* create.c */
 typedef FILE *(*CreateNameGen)(char **outname);
-bool create_icon(int filec, char **filev, CreateNameGen outfile_gen, bool icon_mode, int32_t hotspot_x, int32_t hotspot_y, int32_t alpha_threshold, int32_t bit_count);
+bool create_icon(int filec, char **filev, int raw_filec, char** raw_filev, CreateNameGen outfile_gen, bool icon_mode, int32_t hotspot_x, int32_t hotspot_y, int32_t alpha_threshold, int32_t bit_count);
 #endif

@@ -62,7 +62,7 @@ enum {
     CURSOR_OPT,
 };
 
-static char *short_opts = "xlco:i:w:h:p:b:X:Y:t:";
+static char *short_opts = "xlco:i:w:h:p:b:X:Y:t:r:";
 static struct option long_opts[] = {
     { "extract",		no_argument,    	NULL, 'x' },
     { "list",			no_argument,		NULL, 'l' },
@@ -80,6 +80,7 @@ static struct option long_opts[] = {
     { "alpha-threshold", 	required_argument, 	NULL, 't' },
     { "icon",       	 	no_argument,       	NULL, ICON_OPT	},
     { "cursor",     	 	no_argument,       	NULL, CURSOR_OPT },
+    { "raw", 			required_argument, 	NULL, 'r' },
     { 0, 0, 0, 0 }
 };
 
@@ -173,6 +174,7 @@ display_help(void)
     printf(_("  -Y, --hotspot-y=COORD        match or set cursor hotspot y-coordinate\n"));
     printf(_("  -t, --alpha-threshold=LEVEL  highest level in alpha channel indicating\n"
 	     "                               transparent image portions (default is 127)\n"));
+    printf(_("  -r, --raw=FILENAME           store input file as raw PNG (\"Vista icons\")\n"));
     printf(_("      --icon                   match icons only\n"));
     printf(_("      --cursor                 match cursors only\n"));
     printf(_("  -o, --output=PATH            where to place extracted files\n"));
@@ -206,6 +208,8 @@ main(int argc, char **argv)
     bool create_mode = false;
     FILE *in;
     char *inname;
+    int raw_filec = 0;
+    char** raw_filev = 0;
 
     set_program_name(argv[0]);
 
@@ -272,6 +276,11 @@ main(int argc, char **argv)
 	    if (!parse_int32(optarg, &alpha_threshold))
 		die(_("invalid alpha-threshold value: %s"), optarg);
 	    break;
+	case 'r':
+	    raw_filev = realloc (raw_filev, (raw_filec+1)*sizeof (char*));
+	    raw_filev[raw_filec] = optarg;
+	    raw_filec++;
+	    break;
 	case ICON_OPT:
 	    icon_only = true;
 	    break;
@@ -323,9 +332,9 @@ main(int argc, char **argv)
     }
 
     if (create_mode) {
-        if (argc-optind <= 0)
+        if (argc-optind+raw_filec <= 0)
 	    die(_("missing arguments"));
-        if (!create_icon(argc-optind, argv+optind, create_outfile_gen, (icon_only ? true : !cursor_only), hotspot_x, hotspot_y, alpha_threshold, bitdepth))
+        if (!create_icon(argc-optind, argv+optind, raw_filec, raw_filev, create_outfile_gen, (icon_only ? true : !cursor_only), hotspot_x, hotspot_y, alpha_threshold, bitdepth))
             exit(1);
     }
 

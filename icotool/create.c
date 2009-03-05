@@ -66,7 +66,7 @@ xfread(void *ptr, size_t size, FILE *stream)
 }
 
 bool
-create_icon(int filec, char **filev, CreateNameGen outfile_gen, bool icon_mode, int32_t hotspot_x, int32_t hotspot_y, int32_t alpha_threshold, int32_t bit_count)
+create_icon(int filec, char **filev, int raw_filec, char** raw_filev, CreateNameGen outfile_gen, bool icon_mode, int32_t hotspot_x, int32_t hotspot_y, int32_t alpha_threshold, int32_t bit_count)
 {
 	struct {
 		FILE *in;
@@ -81,6 +81,7 @@ create_icon(int filec, char **filev, CreateNameGen outfile_gen, bool icon_mode, 
 		uint8_t *image_data;
 		uint8_t **row_datas;
 		Palette *palette;
+		bool store_raw;
 	} *img;
 
 	Win32CursorIconFileDir dir;
@@ -89,6 +90,9 @@ create_icon(int filec, char **filev, CreateNameGen outfile_gen, bool icon_mode, 
 	uint32_t c, d, x;
 	uint32_t dib_start;
 	png_byte ct;
+	int org_filec = filec;
+	
+	filec += raw_filec;
 
 	img = xmalloc_clear(filec * sizeof(*img));
 
@@ -98,10 +102,12 @@ create_icon(int filec, char **filev, CreateNameGen outfile_gen, bool icon_mode, 
 		uint8_t transparency[256];
 		uint16_t transparency_count;
 		bool need_transparency;
+		const char* real_filev = (c >= org_filec) ? raw_filev[c-org_filec] : filev[c];
 
-		set_message_header(filev[c]);
+		img[c].store_raw = (c >= org_filec);
+		set_message_header(real_filev);
 
-		img[c].in = fopen(filev[c], "rb");
+		img[c].in = fopen(real_filev, "rb");
     	if (img[c].in == NULL) {
         	warn_errno(_("cannot open file"));
 			goto cleanup;
@@ -136,90 +142,112 @@ create_icon(int filec, char **filev, CreateNameGen outfile_gen, bool icon_mode, 
 		png_read_update_info(img[c].png_ptr, img[c].info_ptr);
 
 		img[c].width = png_get_image_width(img[c].png_ptr, img[c].info_ptr);
-		/*if (img[c].width > 255) {
-			warn("image too wide (max 255, was %d pixels)", img[c].width);
+		if (img[c].width > 256) {
+			warn("image too wide (max 256, was %d pixels)", img[c].width);
 			goto cleanup;
-		}*/
+		}
 		img[c].height = png_get_image_height(img[c].png_ptr, img[c].info_ptr);
-		/*if (img[c].height > 255) {
-			warn("image too tall (max 255, was %d pixels)", img[c].height);
+		if (img[c].height > 256) {
+			warn("image too tall (max 256, was %d pixels)", img[c].height);
 			goto cleanup;
-		}*/
-
-		row_bytes = png_get_rowbytes(img[c].png_ptr, img[c].info_ptr);
-		img[c].row_datas = xmalloc(img[c].height * sizeof(png_bytep *));
-		img[c].row_datas[0] = xmalloc(img[c].height * row_bytes);
-		for (d = 1; d < img[c].height; d++)
-			img[c].row_datas[d] = img[c].row_datas[d-1] + row_bytes;
-		png_read_rows(img[c].png_ptr, img[c].row_datas, NULL, img[c].height);
-
-		ct = png_get_color_type(img[c].png_ptr, img[c].info_ptr);
-		img[c].palette = palette_new();
-
-
-		/* Count number of necessary colors in palette and number of transparencies */
-		memset(transparency, 0, 256);
-		for (d = 0; d < img[c].height; d++) {
-			png_bytep row = img[c].row_datas[d];
-			for (x = 0; x < img[c].width; x++) {
-				if (palette_count(img[c].palette) <= (1 << 8))
-				    palette_add(img[c].palette, row[4*x+0], row[4*x+1], row[4*x+2]);
-				if (ct & PNG_COLOR_MASK_ALPHA)
-				    transparency[row[4*x+3]] = 1;
-			}
-		}
-		transparency_count = 0;
-		for (d = 0; d < 256; d++)
-		    transparency_count += transparency[d];
-
-		/* If there are more than two steps of transparency, or if the
-		 * two steps are NOT either entirely off (0) and entirely on (255),
-		 * then we will lose transparency information if bit_count is not 32.
-		 */
-		need_transparency =
-		    transparency_count > 2
-		    ||
-		    (transparency_count == 2 && (transparency[0] == 0 || transparency[255] == 0));
-
-		/* Can we keep all colors in a palette? */
-		if (need_transparency) {
-			if (bit_count != -1) {
-			    if (bit_count != 32)
-				warn("decreasing bit depth will discard variable transparency", transparency_count);
-			    /* Why 24 and not bit_count? Otherwise we might decrease below what's possible
-			           * due to number of colors in image. The real decrease happens below. */
-			    img[c].bit_count = 24;
-			} else {
-			    img[c].bit_count = 32;
-			}
-			img[c].palette_count = 0;
-		}
-		else if (palette_count(img[c].palette) <= 256) {
-			for (d = 1; palette_count(img[c].palette) > 1 << d; d <<= 1);
-			if (d == 2)	/* four colors (two bits) are not supported */
-				d = 4;
-			img[c].bit_count = d;
-			img[c].palette_count = 1 << d;
-		}
-		else {
-			img[c].bit_count = 24;
-			img[c].palette_count = 0;
-		}
-
-		/* Does the user want to change number of bits per pixel? */
-		if (bit_count != -1) {
-			if (img[c].bit_count == bit_count) {
-				/* No operation */
-			} else if (img[c].bit_count < bit_count) {
-				img[c].bit_count = bit_count;
-				img[c].palette_count = (bit_count > 16 ? 0 : 1 << bit_count);
-			} else {
-				warn(_("cannot decrease bit depth from %d to %d, bit depth not changed"), img[c].bit_count, bit_count);
-			}
 		}
 		
-		img[c].image_size = img[c].height * ROW_BYTES(img[c].width * img[c].bit_count);
-		img[c].mask_size = img[c].height * ROW_BYTES(img[c].width);
+		if (img[c].store_raw)
+		{
+			ct = png_get_color_type(img[c].png_ptr, img[c].info_ptr);
+			if (ct & PNG_COLOR_MASK_PALETTE)
+			{
+				img[c].bit_count = png_get_bit_depth(img[c].png_ptr, img[c].info_ptr);
+			}
+			else
+				img[c].bit_count = png_get_bit_depth(img[c].png_ptr, img[c].info_ptr)
+					* png_get_channels(img[c].png_ptr, img[c].info_ptr);
+			png_destroy_read_struct(&img[c].png_ptr, &img[c].info_ptr, NULL);
+			
+			fseek(img[c].in, 0, SEEK_END);
+			img[c].image_size = ftell(img[c].in);
+			fseek(img[c].in, 0, SEEK_SET);
+			img[c].image_data = xmalloc(img[c].image_size);
+		    	if (!xfread(img[c].image_data, img[c].image_size, img[c].in))
+				goto cleanup;
+		}
+		else
+		{
+			row_bytes = png_get_rowbytes(img[c].png_ptr, img[c].info_ptr);
+			img[c].row_datas = xmalloc(img[c].height * sizeof(png_bytep *));
+			img[c].row_datas[0] = xmalloc(img[c].height * row_bytes);
+			for (d = 1; d < img[c].height; d++)
+				img[c].row_datas[d] = img[c].row_datas[d-1] + row_bytes;
+			png_read_rows(img[c].png_ptr, img[c].row_datas, NULL, img[c].height);
+
+			ct = png_get_color_type(img[c].png_ptr, img[c].info_ptr);
+			img[c].palette = palette_new();
+
+
+			/* Count number of necessary colors in palette and number of transparencies */
+			memset(transparency, 0, 256);
+			for (d = 0; d < img[c].height; d++) {
+				png_bytep row = img[c].row_datas[d];
+				for (x = 0; x < img[c].width; x++) {
+					if (palette_count(img[c].palette) <= (1 << 8))
+					    palette_add(img[c].palette, row[4*x+0], row[4*x+1], row[4*x+2]);
+					if (ct & PNG_COLOR_MASK_ALPHA)
+					    transparency[row[4*x+3]] = 1;
+				}
+			}
+			transparency_count = 0;
+			for (d = 0; d < 256; d++)
+			    transparency_count += transparency[d];
+
+			/* If there are more than two steps of transparency, or if the
+			 * two steps are NOT either entirely off (0) and entirely on (255),
+			 * then we will lose transparency information if bit_count is not 32.
+			 */
+			need_transparency =
+			    transparency_count > 2
+			    ||
+			    (transparency_count == 2 && (transparency[0] == 0 || transparency[255] == 0));
+
+			/* Can we keep all colors in a palette? */
+			if (need_transparency) {
+				if (bit_count != -1) {
+				    if (bit_count != 32)
+					warn("decreasing bit depth will discard variable transparency", transparency_count);
+				    /* Why 24 and not bit_count? Otherwise we might decrease below what's possible
+					   * due to number of colors in image. The real decrease happens below. */
+				    img[c].bit_count = 24;
+				} else {
+				    img[c].bit_count = 32;
+				}
+				img[c].palette_count = 0;
+			}
+			else if (palette_count(img[c].palette) <= 256) {
+				for (d = 1; palette_count(img[c].palette) > 1 << d; d <<= 1);
+				if (d == 2)	/* four colors (two bits) are not supported */
+					d = 4;
+				img[c].bit_count = d;
+				img[c].palette_count = 1 << d;
+			}
+			else {
+				img[c].bit_count = 24;
+				img[c].palette_count = 0;
+			}
+
+			/* Does the user want to change number of bits per pixel? */
+			if (bit_count != -1) {
+				if (img[c].bit_count == bit_count) {
+					/* No operation */
+				} else if (img[c].bit_count < bit_count) {
+					img[c].bit_count = bit_count;
+					img[c].palette_count = (bit_count > 16 ? 0 : 1 << bit_count);
+				} else {
+					warn(_("cannot decrease bit depth from %d to %d, bit depth not changed"), img[c].bit_count, bit_count);
+				}
+			}
+		
+			img[c].image_size = img[c].height * ROW_BYTES(img[c].width * img[c].bit_count);
+			img[c].mask_size = img[c].height * ROW_BYTES(img[c].width);
+		}
 
 		restore_message_header();
 	}
@@ -245,8 +273,9 @@ create_icon(int filec, char **filev, CreateNameGen outfile_gen, bool icon_mode, 
 	for (c = 0; c < filec; c++) {
 		Win32CursorIconFileDirEntry entry;
 
-		entry.width = MIN(255, img[c].width);
-		entry.height = MIN(255, img[c].height);
+		/* A dimension of 256 is stored as 0 in the entry */
+		entry.width = (uint8_t)img[c].width;
+		entry.height = (uint8_t)img[c].height;
 		entry.reserved = 0;
 		if (icon_mode) {
 			entry.hotspot_x = 0;	 /* some mistake this for planes (XXX) */
@@ -257,10 +286,13 @@ create_icon(int filec, char **filev, CreateNameGen outfile_gen, bool icon_mode, 
 		}
 		entry.dib_offset = dib_start;
 		entry.color_count = (img[c].bit_count >= 8 ? 0 : 1 << img[c].bit_count);
-		entry.dib_size = img[c].palette_count * sizeof(Win32RGBQuad)
-				+ sizeof(Win32BitmapInfoHeader)
-				+ img[c].image_size
-				+ img[c].mask_size;
+		if (img[c].store_raw)
+			entry.dib_size = img[c].image_size;
+		else
+			entry.dib_size = img[c].palette_count * sizeof(Win32RGBQuad)
+					+ sizeof(Win32BitmapInfoHeader)
+					+ img[c].image_size
+					+ img[c].mask_size;
 
 		dib_start += entry.dib_size;
 
@@ -273,102 +305,118 @@ create_icon(int filec, char **filev, CreateNameGen outfile_gen, bool icon_mode, 
 	}
 
 	for (c = 0; c < filec; c++) {
-		Win32BitmapInfoHeader bitmap;
-
-		bitmap.size = sizeof(Win32BitmapInfoHeader);
-		bitmap.width = png_get_image_width(img[c].png_ptr, img[c].info_ptr);
-		bitmap.height = png_get_image_height(img[c].png_ptr, img[c].info_ptr) * 2;
-		bitmap.planes = 1;							// appears to be 1 always (XXX)
-		bitmap.bit_count = img[c].bit_count;
-		bitmap.compression = 0;
-		bitmap.x_pels_per_meter = 0;				// should be 0 always
-		bitmap.y_pels_per_meter = 0;				// should be 0 always
-		bitmap.clr_important = 0;					// should be 0 always
-		bitmap.clr_used = img[c].palette_count;
-		bitmap.size_image = img[c].image_size;		// appears to be ok here (may be image_size+mask_size or 0, XXX)
-
-		fix_win32_bitmap_info_header_endian(&bitmap);
-		if (fwrite(&bitmap, sizeof(Win32BitmapInfoHeader), 1, out) != 1) {
-			warn_errno("cannot write to file");
-			goto cleanup;
-		}
-
-		if (img[c].bit_count <= 16) {
-			Win32RGBQuad color;
-
-			palette_assign_indices(img[c].palette);
-			color.reserved = 0;
-			while (palette_next(img[c].palette, &color.red, &color.green, &color.blue))
-				fwrite(&color, sizeof(Win32RGBQuad), 1, out);
-
-			/* Pad with empty colors. The reason we do this is because we
-			 * specify bitmap.clr_used as a base of 2. The latter is probably
-			 * not necessary according to the original specs, but many
-			 * programs that read icons assume it. Especially gdk-pixbuf.
-			 */
-		    	memclear(&color, sizeof(Win32RGBQuad));
-			for (d = palette_count(img[c].palette); d < 1 << img[c].bit_count; d++)
-				fwrite(&color, sizeof(Win32RGBQuad), 1, out);
-		}
-
-		img[c].image_data = xmalloc_clear(img[c].image_size);
-
-		for (d = 0; d < img[c].height; d++) {
-			png_bytep row = img[c].row_datas[img[c].height - d - 1];
-			if (img[c].bit_count < 24) {
-				uint32_t imod = d * (img[c].image_size/img[c].height) * 8 / img[c].bit_count;
-				for (x = 0; x < img[c].width; x++) {
-					uint32_t color;
-					color = palette_lookup(img[c].palette, row[4*x+0], row[4*x+1], row[4*x+2]);
-					simple_setvec(img[c].image_data, x+imod, img[c].bit_count, color);
-				}
-			} else if (img[c].bit_count == 24) {
-				uint32_t irow = d * (img[c].image_size/img[c].height);
-				for (x = 0; x < img[c].width; x++) {
-					img[c].image_data[3*x+0 + irow] = row[4*x+2];
-					img[c].image_data[3*x+1 + irow] = row[4*x+1];
-					img[c].image_data[3*x+2 + irow] = row[4*x+0];
-				}
-			} else if (img[c].bit_count == 32) {
-				uint32_t irow = d * (img[c].image_size/img[c].height);
-				for (x = 0; x < img[c].width; x++) {
-					img[c].image_data[4*x+0 + irow] = row[4*x+2];
-					img[c].image_data[4*x+1 + irow] = row[4*x+1];
-					img[c].image_data[4*x+2 + irow] = row[4*x+0];
-					img[c].image_data[4*x+3 + irow] = row[4*x+3];
-				}
+		if (img[c].store_raw)
+		{
+			if (fwrite(img[c].image_data, img[c].image_size, 1, out) != 1) {
+				warn_errno(_("cannot write to file"));
+				goto cleanup;
 			}
 		}
+		else
+		{
+			Win32BitmapInfoHeader bitmap;
 
-		if (fwrite(img[c].image_data, img[c].image_size, 1, out) != 1) {
-			warn_errno(_("cannot write to file"));
-			goto cleanup;
-		}
+			bitmap.size = sizeof(Win32BitmapInfoHeader);
+			bitmap.width = png_get_image_width(img[c].png_ptr, img[c].info_ptr);
+			bitmap.height = png_get_image_height(img[c].png_ptr, img[c].info_ptr) * 2;
+			bitmap.planes = 1;							// appears to be 1 always (XXX)
+			bitmap.bit_count = img[c].bit_count;
+			bitmap.compression = 0;
+			bitmap.x_pels_per_meter = 0;				// should be 0 always
+			bitmap.y_pels_per_meter = 0;				// should be 0 always
+			bitmap.clr_important = 0;					// should be 0 always
+			bitmap.clr_used = img[c].palette_count;
+			bitmap.size_image = img[c].image_size;		// appears to be ok here (may be image_size+mask_size or 0, XXX)
 
-		for (d = 0; d < img[c].height; d++) {
-			png_bytep row = img[c].row_datas[img[c].height - d - 1];
-
-			for (x = 0; x < img[c].width; x += 8) {
-				uint8_t mask = 0;
-				mask |= (row[4*(x+0)+3] <= alpha_threshold ? 1 << 7 : 0);
-				mask |= (row[4*(x+1)+3] <= alpha_threshold ? 1 << 6 : 0);
-				mask |= (row[4*(x+2)+3] <= alpha_threshold ? 1 << 5 : 0);
-				mask |= (row[4*(x+3)+3] <= alpha_threshold ? 1 << 4 : 0);
-				mask |= (row[4*(x+4)+3] <= alpha_threshold ? 1 << 3 : 0);
-				mask |= (row[4*(x+5)+3] <= alpha_threshold ? 1 << 2 : 0);
-				mask |= (row[4*(x+6)+3] <= alpha_threshold ? 1 << 1 : 0);
-				mask |= (row[4*(x+7)+3] <= alpha_threshold ? 1 << 0 : 0);
-				fputc(mask, out);
+			fix_win32_bitmap_info_header_endian(&bitmap);
+			if (fwrite(&bitmap, sizeof(Win32BitmapInfoHeader), 1, out) != 1) {
+				warn_errno("cannot write to file");
+				goto cleanup;
 			}
 
-			fpad(out, 0, img[c].mask_size/img[c].height - x/8);
+			if (img[c].bit_count <= 16) {
+				Win32RGBQuad color;
+
+				palette_assign_indices(img[c].palette);
+				color.reserved = 0;
+				while (palette_next(img[c].palette, &color.red, &color.green, &color.blue))
+					fwrite(&color, sizeof(Win32RGBQuad), 1, out);
+
+				/* Pad with empty colors. The reason we do this is because we
+				 * specify bitmap.clr_used as a base of 2. The latter is probably
+				 * not necessary according to the original specs, but many
+				 * programs that read icons assume it. Especially gdk-pixbuf.
+				 */
+			    	memclear(&color, sizeof(Win32RGBQuad));
+				for (d = palette_count(img[c].palette); d < 1 << img[c].bit_count; d++)
+					fwrite(&color, sizeof(Win32RGBQuad), 1, out);
+			}
+
+			img[c].image_data = xmalloc_clear(img[c].image_size);
+
+			for (d = 0; d < img[c].height; d++) {
+				png_bytep row = img[c].row_datas[img[c].height - d - 1];
+				if (img[c].bit_count < 24) {
+					uint32_t imod = d * (img[c].image_size/img[c].height) * 8 / img[c].bit_count;
+					for (x = 0; x < img[c].width; x++) {
+						uint32_t color;
+						color = palette_lookup(img[c].palette, row[4*x+0], row[4*x+1], row[4*x+2]);
+						simple_setvec(img[c].image_data, x+imod, img[c].bit_count, color);
+					}
+				} else if (img[c].bit_count == 24) {
+					uint32_t irow = d * (img[c].image_size/img[c].height);
+					for (x = 0; x < img[c].width; x++) {
+						img[c].image_data[3*x+0 + irow] = row[4*x+2];
+						img[c].image_data[3*x+1 + irow] = row[4*x+1];
+						img[c].image_data[3*x+2 + irow] = row[4*x+0];
+					}
+				} else if (img[c].bit_count == 32) {
+					uint32_t irow = d * (img[c].image_size/img[c].height);
+					for (x = 0; x < img[c].width; x++) {
+						img[c].image_data[4*x+0 + irow] = row[4*x+2];
+						img[c].image_data[4*x+1 + irow] = row[4*x+1];
+						img[c].image_data[4*x+2 + irow] = row[4*x+0];
+						img[c].image_data[4*x+3 + irow] = row[4*x+3];
+					}
+				}
+			}
+
+			if (fwrite(img[c].image_data, img[c].image_size, 1, out) != 1) {
+				warn_errno(_("cannot write to file"));
+				goto cleanup;
+			}
+
+			for (d = 0; d < img[c].height; d++) {
+				png_bytep row = img[c].row_datas[img[c].height - d - 1];
+
+				for (x = 0; x < img[c].width; x += 8) {
+					uint8_t mask = 0;
+					mask |= (row[4*(x+0)+3] <= alpha_threshold ? 1 << 7 : 0);
+					mask |= (row[4*(x+1)+3] <= alpha_threshold ? 1 << 6 : 0);
+					mask |= (row[4*(x+2)+3] <= alpha_threshold ? 1 << 5 : 0);
+					mask |= (row[4*(x+3)+3] <= alpha_threshold ? 1 << 4 : 0);
+					mask |= (row[4*(x+4)+3] <= alpha_threshold ? 1 << 3 : 0);
+					mask |= (row[4*(x+5)+3] <= alpha_threshold ? 1 << 2 : 0);
+					mask |= (row[4*(x+6)+3] <= alpha_threshold ? 1 << 1 : 0);
+					mask |= (row[4*(x+7)+3] <= alpha_threshold ? 1 << 0 : 0);
+					fputc(mask, out);
+				}
+
+				fpad(out, 0, img[c].mask_size/img[c].height - x/8);
+			}
 		}
 
 		free(img[c].image_data);
-		palette_free(img[c].palette);
-		free(img[c].row_datas[0]);
-		free(img[c].row_datas);
-		png_read_end(img[c].png_ptr, img[c].info_ptr);
+		if (img[c].palette) palette_free(img[c].palette);
+		if (img[c].row_datas)
+		{
+			free(img[c].row_datas[0]);
+			free(img[c].row_datas);
+		}
+		if (!img[c].store_raw)
+		{
+			png_read_end(img[c].png_ptr, img[c].info_ptr);
+		}
 		png_destroy_read_struct(&img[c].png_ptr, &img[c].info_ptr, NULL);
 		fclose(img[c].in);
 		memclear(&img[c], sizeof(*img));
