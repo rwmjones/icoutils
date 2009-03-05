@@ -1,0 +1,62 @@
+%define package @PACKAGE@
+%define version @VERSION@
+%define release 1
+
+Summary:     Utility for extracting and converting Microsoft icon and cursor files
+Name:        %{package}
+Version:     %{version}
+Release:     %{release}
+Epoch:       1
+Copyright:   GNU General Public License
+Group:       Graphics
+URL:         http://www.student.lu.se/~nbi98oli/icoutils.html
+Packager:    Sean Peirce <seanp71@bellatlantic.net>
+Vendor:      Oskar Liljeblad <oskar@osk.mine.nu>
+Source:      %{package}-%{version}.tar.gz
+BuildRoot:   %{_tmppath}/%{name}-%{version}-root
+Provides:    icoutils-%{version}
+AutoReqProv: yes
+Prefix: /usr
+
+%description
+The icoutils are a set of programs for extracting and converting images in Microsoft Windows icon and cursor files. These files usually have the extension .ico or .cur, but they can also be embedded in executables or libraries.
+
+%prep
+
+%setup -q
+
+%build
+./configure --prefix=${prefix}
+make
+
+%install
+rm -rf %{buildroot}
+mkdir -p %{buildroot}
+make prefix=%{buildroot}%{prefix} \
+	mandir=$RPM_BUILD_ROOT%{_mandir} \
+	sysconfdir=%{buildroot}/etc \
+	install
+
+%clean
+rm -rf %{buildroot}
+
+%files
+%defattr(-,root,root)
+%doc README AUTHORS COPYING NEWS TODO ChangeLog
+%{_mandir}/*/*
+%{_bindir}/*
+
+%changelog
+* Sat Sep 27 2003 Oskar Liljeblad <oskar@osk.mine.nu>
+- initial import
+- some minor modifications
+* Wed Sep 24 2003 Sean Peirce <seanp71@bellatlantic.net>
+- created the spec file
+* Mon Jun 30 2003 Version 0.20.0
+- Added support for extracting and creating icons with 8-bit alpha
+- (variable transparency). Previously there were only two levels of
+- transparency: none and completely transparent (bug reported by Steve
+- van Bennekom).
+- Link with -lz -lm since libpng requires it on some systems (bug
+- reported by Götz Waschk).
+- Fixed some minor compilation warnings.
