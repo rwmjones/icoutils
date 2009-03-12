@@ -9,7 +9,7 @@ AM_MAINTAINER_MODE
 # Stuff for the config.h.in file
 AC_CONFIG_HEADERS(config.h)
 #AH_TEMPLATE([PKGUSERDIR], [User directory for program files])
-AC_GNU_SOURCE
+#AC_GNU_SOURCE # NOTE - done by gl_EARLY below; commenting here silences bootstrap warnings
 AH_TEMPLATE(LOCALEDIR, [Directory where gettext translations are kept.])
 AC_DEFINE_DIR(LOCALEDIR, datadir/locale)
 
