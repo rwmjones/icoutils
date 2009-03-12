@@ -2,7 +2,7 @@ aclocal.m4
 autom4te.cache/
 common/Makefile.in
 config.guess
-config.h
+config.h.in
 config.h.in~
 config.sub
 configure
@@ -12,3 +12,7 @@ lib/Makefile.in
 wrestool/Makefile.in
 Makefile.in
 ltmain.sh
+depcomp
+install-sh
+missing
+mkinstalldirs
