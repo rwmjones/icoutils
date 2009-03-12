@@ -189,6 +189,13 @@ create_icon(int filec, char **filev, int raw_filec, char** raw_filev, CreateName
 			for (d = 0; d < img[c].height; d++) {
 				png_bytep row = img[c].row_datas[d];
 				for (x = 0; x < img[c].width; x++) {
+					/* Set color of fully transparent pixels to black.
+					    On Windows Mobile, and possibly on regular Windows OSes as well,
+					    it seems that Windows does not completely ignore RGB-values of 
+					    entirely transparent pixels as expected.
+					 */
+					if ((ct & PNG_COLOR_MASK_ALPHA) && (row[4*x+3] == 0))
+					    row[4*x+0] = row[4*x+1] = row[4*x+2] = 0;
 					if (palette_count(img[c].palette) <= (1 << 8))
 					    palette_add(img[c].palette, row[4*x+0], row[4*x+1], row[4*x+2]);
 					if (ct & PNG_COLOR_MASK_ALPHA)
