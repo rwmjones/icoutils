@@ -48,9 +48,15 @@
 #include "icotool.h"
 #include "win32-endian.h"
 
+#define ICO_PNG_MAGIC       0x474e5089
+
 #define ROW_BYTES(bits) ((((bits) + 31) >> 5) << 2)
 
+#define FALSE	0
+#define TRUE	1
+
 static uint32_t simple_vec(uint8_t *data, uint32_t ofs, uint8_t size);
+static int read_png(uint8_t *image_data, uint32_t image_size, uint32_t *bit_count, uint32_t *width, uint32_t *height);
 
 static bool
 xfread(void *ptr, size_t size, FILE *stream)
@@ -145,11 +151,8 @@ extract_icons(FILE *in, char *inname, bool listmode, ExtractNameGen outfile_gen,
 
 				fix_win32_bitmap_info_header_endian(&bitmap);
 				/* Vista icon: it's just a raw PNG */
-				if (bitmap.size == 0x474e5089)
+				if (bitmap.size == ICO_PNG_MAGIC)
 				{
-					struct png_mem_in png_in;
-					png_byte ct;
-					
 					fseek(in, offset, SEEK_SET);
 				
 					image_size = entries[c].dib_size;
@@ -157,36 +160,17 @@ extract_icons(FILE *in, char *inname, bool listmode, ExtractNameGen outfile_gen,
 					if (!xfread(image_data, image_size, in))
 						goto local_cleanup;
 					
-					png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL /*user_error_fn, user_warning_fn*/);
-					if (png_ptr == NULL) {
-						warn(_("cannot initialize PNG library"));
-						goto cleanup;
-					}
-					info_ptr = png_create_info_struct(png_ptr);
-					if (info_ptr == NULL) {
-						warn(_("cannot create PNG info structure - out of memory"));
-						goto cleanup;
-					}
+					if (!read_png (image_data, image_size, &bit_count, &width, &height))
+						goto local_cleanup;
 					
-					png_in.ptr = image_data;
-					png_in.size = image_size;
-					
-					png_set_read_fn(png_ptr, &png_in, &png_read_mem);
-					png_read_info(png_ptr, info_ptr);
-					png_read_update_info(png_ptr, info_ptr);
-					
-					width = png_get_image_width(png_ptr, info_ptr);
-					height = png_get_image_height(png_ptr, info_ptr);
-					ct = png_get_color_type(png_ptr, info_ptr);
-					if (ct & PNG_COLOR_MASK_PALETTE)
-					{
-						bit_count = png_get_bit_depth(png_ptr, info_ptr);
-					}
-					else
-						bit_count = png_get_bit_depth(png_ptr, info_ptr)
-							* png_get_channels(png_ptr, info_ptr);
 					completed++;
 					
+					if (!filter(completed, width, height, bitmap.bit_count, palette_count, dir.type == 1,
+							(dir.type == 1 ? 0 : entries[c].hotspot_x),
+							(dir.type == 1 ? 0 : entries[c].hotspot_y)))
+						goto done;
+					matched++;
+
 					if (listmode) {
 						printf(_("--%s --index=%d --width=%d --height=%d --bit-depth=%d --palette-size=%d"),
 								(dir.type == 1 ? "icon" : "cursor"), completed, width, height,
@@ -389,8 +373,6 @@ extract_icons(FILE *in, char *inname, bool listmode, ExtractNameGen outfile_gen,
 				}
 				if (out != NULL)
 					fclose(out);
-				if (png_ptr != NULL)
-					png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
 				if (outname != NULL)
 					free(outname);
 				goto cleanup;
@@ -444,3 +426,52 @@ simple_vec(uint8_t *data, uint32_t ofs, uint8_t size)
 
 	return 0;
 }
+
+static int
+read_png(uint8_t *image_data, uint32_t image_size, uint32_t *bit_count, uint32_t *width, uint32_t *height)
+{
+	png_structp png_ptr;
+	png_infop info_ptr;
+	struct png_mem_in png_in;
+	png_byte ct;
+
+	png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL /*user_error_fn, user_warning_fn*/);
+	if (png_ptr == NULL) {
+		warn(_("cannot initialize PNG library"));
+		return FALSE;
+	}
+	info_ptr = png_create_info_struct(png_ptr);
+	if (info_ptr == NULL) {
+		warn(_("cannot create PNG info structure - out of memory"));
+		return FALSE;
+	}
+	
+	if (setjmp(png_jmpbuf(png_ptr)))
+	{
+		png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+		return FALSE;
+	}
+
+	png_in.ptr = image_data;
+	png_in.size = image_size;
+	
+	png_set_read_fn(png_ptr, &png_in, &png_read_mem);
+	png_read_info(png_ptr, info_ptr);
+	png_read_update_info(png_ptr, info_ptr);
+	
+	*width = png_get_image_width(png_ptr, info_ptr);
+	*height = png_get_image_height(png_ptr, info_ptr);
+	ct = png_get_color_type(png_ptr, info_ptr);
+	if (ct & PNG_COLOR_MASK_PALETTE)
+	{
+		*bit_count = png_get_bit_depth(png_ptr, info_ptr);
+	}
+	else
+		*bit_count = png_get_bit_depth(png_ptr, info_ptr)
+			* png_get_channels(png_ptr, info_ptr);
+
+	png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+	
+	return TRUE;
+}
+
