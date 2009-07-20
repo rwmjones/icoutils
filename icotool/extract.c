@@ -19,9 +19,6 @@
 
 #include <config.h>
 #include <assert.h>		/* C89 */
-#include <stdint.h>		/* POSIX/Gnulib */
-#include <stdlib.h>		/* C89 */
-#include <stdio.h>		/* C89 */
 #if HAVE_PNG_H
 # include <png.h>
 #else
@@ -37,7 +34,13 @@
 #  endif
 # endif
 #endif
-#include "gettext.h"
+#include <stdint.h>            /* Gnulib/POSIX */
+#include <stdio.h>             /* C89 */
+#include <stdbool.h>           /* Gnulib/POSIX */
+#include <stdlib.h>            /* C89 */
+#include "gettext.h"           /* Gnulib */
+#include "xalloc.h"            /* Gnulib */
+#include "minmax.h"            /* Gnulib */
 #define _(s) gettext(s)
 #define N_(s) gettext_noop(s)
 #include "common/strbuf.h"

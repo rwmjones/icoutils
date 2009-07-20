@@ -1,34 +1,35 @@
 /* error.c - Error-management and messaging routines.
  *
- * Copyright (C) 1998-2005 Oskar Liljeblad
+ * Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2008
+ * Oskar Liljeblad
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * GNU Library General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 #if HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 #include <errno.h>	/* C89 */
-#include <string.h>	/* C89 */
-#include <stdarg.h>	/* C89 */
-#include <stdlib.h>	/* C89 */
-#include <stdio.h>	/* C89 */
-#include "gettext.h"	/* Gnulib/gettext */
-#define _(String) gettext(String)
-#include "vasprintf.h"	/* Gnulib */
+#include <string.h>	/* Gnulib/C89 */
+#include <stdarg.h>	/* Gnulib/C89 */
+#include <stdlib.h>	/* Gnulib/C89 */
+#include <stdio.h>	/* Gnulib/C89 */
+#include "gettext.h"	/* Gnulib/Gettext */
+#define _(s) gettext(s)
+#include "xvasprintf.h"	/* Gnulib */
+#include "xalloc.h"	/* Gnulib */
 #include "progname.h"	/* Gnulib */
 #include "error.h"
 
@@ -204,11 +205,12 @@ set_message_header(const char *msg, ...)
 	struct MessageHeader *hdr;
 
 	hdr = malloc(sizeof(struct MessageHeader));
-	check_memory(hdr);
+	if (hdr == NULL)
+		xalloc_die();
 	hdr->old = message_header;
 	va_start(ap, msg);
 	if (vasprintf(&hdr->message, msg, ap) < 0)
-		die_memory();
+		xalloc_die();
 	message_header = hdr;
 	va_end(ap);
 }
@@ -229,27 +231,6 @@ restore_message_header(void)
 }
 
 /**
- * @note This function is also defined in error.c
- */
-void
-die_memory(void)
-{
-	errno = ENOMEM;
-	die_errno(NULL);
-}
-
-/**
- * @note This function is also defined in error.c
- */
-void *
-check_memory(void *mem)
-{
-	if (mem == NULL)
-		die_memory();
-	return mem;
-}
-
-/**
  * Set a global error message.
  */
 void
@@ -263,7 +244,7 @@ set_error(const char *format, ...)
 	if (format != NULL) {
 		va_start(ap, format);
 		if (vasprintf(&error_message, format, ap) < 0)
-			die_memory();
+			xalloc_die();
 		va_end(ap);
 	} else {
 		error_message = NULL;

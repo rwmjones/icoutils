@@ -1,37 +1,37 @@
 /* llist.c - A linked list with a container object (unlike GList)
  *
- * Copyright (C) 1998-2005 Oskar Liljeblad
+ * Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2008
+ * Oskar Liljeblad
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * GNU Library General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 #if HAVE_CONFIG_H
 #include <config.h>
 #endif
 #include <sys/types.h>		/* POSIX */
-#include <stdint.h>		/* POSIX/Gnulib */
-#include <stdbool.h>		/* POSIX/Gnulib */
-#include <stdlib.h>		/* C89 */
+#include <stdint.h>		/* Gnulib/POSIX */
+#include <stdbool.h>		/* Gnulib/POSIX */
+#include <stdlib.h>		/* Gnulib/C89 */
+#include <gettext.h>		/* Gnulib/Gettext */
+#define _(s) gettext(s)
 #include "xalloc.h"		/* Gnulib */
-#include <gettext.h>		/* gettext - will include <libintl.h> if ENABLE_NLS */
-#define _(String) gettext(String)
-#include "iterator.h"
-#include "llist.h"
-#include "error.h"
+#include "llist.h"		/* common */
+#include "error.h"		/* common */
 
-typedef struct _LListIterator LListIterator;
+typedef struct _LListIteratorPriv LListIteratorPriv;
 
 struct _LNode {
 	void *data;
@@ -45,31 +45,25 @@ struct _LList {
 	uint32_t size;
 };
 
-struct _LListIterator {
-	Iterator iterator;
-	LList *list;
-	LNode *entry;
+struct _LListIteratorPriv {
+    bool (*has_next)(LListIterator *it);
+    void *(*next)(LListIterator *it);
+    void (*remove)(LListIterator *it);
+    LList *list;
+    LNode *entry;
 };
 
 static inline void llist_add_last_entry(LList *list, LNode *entry);
 static inline void llist_remove_entry(LList *list, LNode *entry);
 static inline LNode *llist_get_entry(LList *list, uint32_t index);
-static bool llist_iterator_has_next(Iterator *it);
-static void *llist_iterator_next(Iterator *it);
-static void llist_iterator_remove(Iterator *it);
+static bool llist_iterator_has_next(LListIterator *it);
+static void *llist_iterator_next(LListIterator *it);
+static void llist_iterator_remove(LListIterator *it);
+#if 0
 static void llist_iterator_restart(Iterator *it);
 static void *llist_iterator_previous(Iterator *it);
 static void llist_iterator_add(Iterator *it, void *value);
-
-static IteratorClass llist_iterator_class = {
-	llist_iterator_has_next,
-	llist_iterator_next,
-	llist_iterator_remove,
-	NULL,
-	llist_iterator_restart,
-	llist_iterator_previous,
-	llist_iterator_add,
-};
+#endif
 
 LList *
 llist_new(void)
@@ -453,71 +447,74 @@ llist_is_empty(LList *list)
 }
 
 void
-llist_iterate(LList *list, IteratorFunc iterator_func)
+llist_iterate(LList *list, void (*iterator_func)())
 {
 	LNode *entry;
 	for (entry = list->first; entry != NULL; entry = entry->next)
 		iterator_func(entry->data);
 }
 
-Iterator *
-llist_iterator(LList *list)
+void
+llist_iterator(LList *list, LListIterator *it)
 {
-	LListIterator *it = xmalloc(sizeof(LListIterator));
-	it->iterator.class = &llist_iterator_class;
-	it->list = list;
-	it->entry = list->first;
-	return &it->iterator;
+    LListIteratorPriv *itp = (LListIteratorPriv *) it;
+    itp->list = list;
+    itp->entry = list->first;
+    itp->has_next = llist_iterator_has_next;
+    itp->next = llist_iterator_next;
+    itp->remove = llist_iterator_remove;
 }
 
 static bool
-llist_iterator_has_next(Iterator *it)
+llist_iterator_has_next(LListIterator *it)
 {
-	return ((LListIterator *) it)->entry != NULL;
+    LListIteratorPriv *itp = (LListIteratorPriv *) it;
+    return itp->entry != NULL;
 }
 
 static void *
-llist_iterator_next(Iterator *it)
+llist_iterator_next(LListIterator *it)
 {
-	LListIterator *listit = (LListIterator *) it;
-	void *data = listit->entry->data;
-	listit->entry = listit->entry->next;
-	return data;
-}
-
-static void *
-llist_iterator_previous(Iterator *it)
-{
-	LListIterator *listit = (LListIterator *) it;
-	void *data;
-	
-	/* FIXME: not sure if this is right.
-	 * This will happen if the last next() returned the last
-	 * element in the list.
-	 */
-	if (listit->entry == NULL)
-		listit->entry = listit->list->last;
-	else
-		listit->entry = listit->entry->previous;
-	data = listit->entry->data;
-	return data;
+    LListIteratorPriv *itp = (LListIteratorPriv *) it;
+    void *data = itp->entry->data;
+    itp->entry = itp->entry->next;
+    return data;
 }
 
 static void
-llist_iterator_remove(Iterator *it)
+llist_iterator_remove(LListIterator *it)
 {
-	LListIterator *listit = (LListIterator *) it;
+    LListIteratorPriv *itp = (LListIteratorPriv *) it;
 
-	if (listit->list->first == listit->entry)
-		internal_error(_("Called iterator_remove before first iterator_next"));
-	//FIXME: we should probably check that this function isn't called
-	// write between next entry.. this is probably done by lastReturned
+    if (itp->list->first == itp->entry)
+	internal_error(_("Called iterator_remove before first iterator_next"));
+    //FIXME: we should probably check that this function isn't called
+    // write between next entry.. this is probably done by lastReturned
 
-	if (listit->entry == NULL) {
-		llist_remove_entry(listit->list, listit->list->last);
-	} else {
-		llist_remove_entry(listit->list, listit->entry->previous);
-	}
+    if (itp->entry == NULL) {
+	llist_remove_entry(itp->list, itp->list->last);
+    } else {
+	llist_remove_entry(itp->list, itp->entry->previous);
+    }
+}
+
+#if 0
+static void *
+llist_iterator_previous(LListIterator *it)
+{
+    LListIteratorPriv *itp = (LListIteratorPriv *) it;
+    void *data;
+
+    /* FIXME: not sure if this is right.
+     * This will happen if the last next() returned the last
+     * element in the list.
+     */
+    if (itp->entry == NULL)
+	itp->entry = itp->list->last;
+    else
+	itp->entry = itp->entry->previous;
+    data = itp->entry->data;
+    return data;
 }
 
 static void
@@ -551,6 +548,7 @@ llist_iterator_add(Iterator *it, void *value)
 		/*listit->entry = entry->next;		-- not necessary */
 	}
 }
+#endif
 
 void
 llist_reverse(LList *list)

@@ -1,9 +1,9 @@
-/* Copyright (C) 2001, 2002, 2003 Free Software Foundation, Inc.
+/* Copyright (C) 2001-2003, 2006-2008 Free Software Foundation, Inc.
    Written by Bruno Haible <haible@clisp.cons.org>, 2001.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
+   the Free Software Foundation; either version 3, or (at your option)
    any later version.
 
    This program is distributed in the hope that it will be useful,
@@ -13,10 +13,10 @@
 
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
-#ifndef _STDBOOL_H
-#define _STDBOOL_H
+#ifndef _GL_STDBOOL_H
+#define _GL_STDBOOL_H
 
 /* ISO C 99 <stdbool.h> for platforms that lack it.  */
 
@@ -41,6 +41,9 @@
 
        - You cannot assume that _Bool is a typedef; it might be a macro.
 
+       - Bit-fields of type 'bool' are not supported.  Portable code
+         should use 'unsigned int foo : 1;' rather than 'bool foo : 1;'.
+
        - In C99, casts and automatic conversions to '_Bool' or 'bool' are
          performed in such a way that every nonzero value gets converted
          to 'true', and zero gets converted to 'false'.  This doesn't work
@@ -55,7 +58,7 @@
 
 /* BeOS <sys/socket.h> already #defines false 0, true 1.  We use the same
    definitions below, but temporarily we have to #undef them.  */
-#ifdef __BEOS__
+#if defined __BEOS__ && !defined __HAIKU__
 # include <OS.h> /* defines bool but not _Bool */
 # undef false
 # undef true
@@ -70,18 +73,41 @@
    (see ISO C 99 6.7.2.2.(4)); however, '_Bool' must promote to 'int'
    (see ISO C 99 6.3.1.1.(2)).  So we add a negative value to the
    enum; this ensures that '_Bool' promotes to 'int'.  */
-#if !(defined __cplusplus || defined __BEOS__)
+#if defined __cplusplus || (defined __BEOS__ && !defined __HAIKU__)
+  /* A compiler known to have 'bool'.  */
+  /* If the compiler already has both 'bool' and '_Bool', we can assume they
+     are the same types.  */
 # if !@HAVE__BOOL@
-#  if defined __SUNPRO_C && (__SUNPRO_C < 0x550 || __STDC__ == 1)
-    /* Avoid stupid "warning: _Bool is a keyword in ISO C99".  */
-#   define _Bool signed char
-enum { false = 0, true = 1 };
-#  else
+typedef bool _Bool;
+# endif
+#else
+# if !defined __GNUC__
+   /* If @HAVE__BOOL@:
+        Some HP-UX cc and AIX IBM C compiler versions have compiler bugs when
+        the built-in _Bool type is used.  See
+          http://gcc.gnu.org/ml/gcc-patches/2003-12/msg02303.html
+          http://lists.gnu.org/archive/html/bug-coreutils/2005-11/msg00161.html
+          http://lists.gnu.org/archive/html/bug-coreutils/2005-10/msg00086.html
+        Similar bugs are likely with other compilers as well; this file
+        wouldn't be used if <stdbool.h> was working.
+        So we override the _Bool type.
+      If !@HAVE__BOOL@:
+        Need to define _Bool ourselves. As 'signed char' or as an enum type?
+        Use of a typedef, with SunPRO C, leads to a stupid
+          "warning: _Bool is a keyword in ISO C99".
+        Use of an enum type, with IRIX cc, leads to a stupid
+          "warning(1185): enumerated type mixed with another type".
+        Even the existence of an enum type, without a typedef,
+          "Invalid enumerator. (badenum)" with HP-UX cc on Tru64.
+        The only benefit of the enum, debuggability, is not important
+        with these compilers.  So use 'signed char' and no enum.  */
+#  define _Bool signed char
+# else
+   /* With this compiler, trust the _Bool type if the compiler has it.  */
+#  if !@HAVE__BOOL@
 typedef enum { _Bool_must_promote_to_int = -1, false = 0, true = 1 } _Bool;
 #  endif
 # endif
-#else
-typedef bool _Bool;
 #endif
 #define bool _Bool
 
@@ -90,4 +116,4 @@ typedef bool _Bool;
 #define true 1
 #define __bool_true_false_are_defined 1
 
-#endif /* _STDBOOL_H */
+#endif /* _GL_STDBOOL_H */

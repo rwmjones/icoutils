@@ -1,434 +1,379 @@
 /* strbuf.c - The string buffer data-structure.
  *
- * Copyright (C) 1998-2005 Oskar Liljeblad
+ * Copyright (C) 2004, 2005, 2007, 2008  Oskar Liljeblad
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * GNU Library General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#if HAVE_CONFIG_H
+/* Depends on
+ * gl_MODULES([strnlen vasprintf xalloc minmax])
+ * Optionally
+ * gl_MODULES([stdint])
+ */
+
+#ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#include <sys/types.h>		/* POSIX */
-#include <stdarg.h>		/* C89 */
-#include <stdlib.h>		/* C89 */
-#include <string.h>		/* C89 - for memmove */
-#include <stdio.h>		/* C89 */
-#include "vasprintf.h"		/* Gnulib */
-#include "xalloc.h"		/* Gnulib */
-#include "minmax.h"		/* Gnulib */
+#include <stdint.h>		/* Gnulib/C99 */
+#include <stdarg.h>		/* Gnulib/C89 */
+#include <stdlib.h>		/* Gnulib/C89 */
+#include <string.h>		/* Gnulib/C89 */
+#include <stdio.h>		/* Gnulib/C89 */
+#include "xalloc.h"             /* Gnulib */
+#include "minmax.h"             /* Gnulib */
 #include "strbuf.h"		/* common */
 
-const int DEFAULT_CAPACITY = 16;
+#define DEFAULT_STRBUF_CAPACITY 16
 
-typedef struct {
-	uint32_t capacity;
-	uint32_t count;
-	char value[0];
-} StringBuffer;
+#define SWAP_INT32(a,b) { int32_t _t = (a); (a) = (b); (b) = _t; }
 
-static inline StringBuffer *
-get_string_buffer(char **buf)
+static int32_t
+normalize_strbuf_pos(StrBuf *sb, int32_t pos)
 {
-	return (StringBuffer *) (*buf - sizeof(StringBuffer));
+    if (pos >= sb->len)
+        return sb->len;
+    if (pos >= 0)
+        return pos;
+    pos += 1 + sb->len;
+    if (pos >= 0)
+        return pos;
+    return 0;
 }
 
-static inline char *
-new_strbuf(uint32_t capacity, uint32_t count)
+static int32_t
+normalize_str_pos(const char *str, int32_t pos)
 {
-	StringBuffer *strbuf;
-	strbuf = xmalloc(sizeof(StringBuffer) + sizeof(char)*capacity);
-	strbuf->capacity = capacity;
-	strbuf->count = count;
-	return strbuf->value;
+    if (str == NULL)
+        return 0;
+    if (pos >= 0)
+        return strnlen(str, pos);
+    pos += 1 + strlen(str);
+    if (pos >= 0)
+        return pos;
+    return 0;
 }
 
 char *
+strbuf_buffer(StrBuf *sb)
+{
+    return sb->buf;
+}
+
+uint32_t
+strbuf_length(StrBuf *sb)
+{
+    return sb->len;
+}
+
+uint32_t
+strbuf_capacity(StrBuf *sb)
+{
+    return sb->capacity;
+}
+
+StrBuf *
 strbuf_new(void)
 {
-	char *buf;
-	buf = new_strbuf(DEFAULT_CAPACITY, 0);
-	buf[0] = '\0';
-	return buf;
+    return strbuf_new_with_capacity(DEFAULT_STRBUF_CAPACITY);
 }
 
-char *
+StrBuf *
 strbuf_new_with_capacity(uint32_t capacity)
 {
-	char *buf;
-	buf = new_strbuf(capacity, 0);
-	buf[0] = '\0';
-	return buf;
+    StrBuf *sb;
+    sb = xmalloc(sizeof(StrBuf));
+    sb->len = 0;
+    sb->capacity = capacity;
+    sb->buf = xmalloc(sb->capacity * sizeof(char));
+    if (sb->capacity > 0)
+    	sb->buf[0] = '\0';
+    return sb;
 }
 
-char *
-strbuf_new_from_string(const char *string)
+StrBuf *
+strbuf_new_from_char_n(uint32_t times, char ch)
 {
-	return strbuf_new_from_substring(string, 0, strlen(string));
+    return strbuf_new_from_substring_n(times, &ch, 0, 1);
 }
 
-char *
-strbuf_to_string(char **buf)
+StrBuf *
+strbuf_new_from_substring_n(uint32_t times, const char *substr, int32_t subsp, int32_t subep)
 {
-	StringBuffer *strbuf = get_string_buffer(buf);
-	char *string;
+    subsp = normalize_str_pos(substr, subsp);
+    subep = normalize_str_pos(substr, subep);
+    if (subsp > subep)
+    	SWAP_INT32(subsp, subep);
 
-	string = xmalloc(sizeof(char) * (strbuf->count + 1));
-	memcpy(string, buf, strbuf->count + 1);
-
-	return string;
+    return strbuf_new_from_data_n(times, substr+subsp, subep-subsp);
 }
 
-char *
-strbuf_substring(char **buf, uint32_t begin_index, uint32_t end_index)
+StrBuf *
+strbuf_new_from_data_n(uint32_t times, const void *mem, uint32_t len)
 {
-	char *string;
-	int32_t len = end_index - begin_index;
+    StrBuf *sb;
 
-	if (len < 0)
-		return NULL;
+    sb = strbuf_new_with_capacity(len * times + 1);
+    sb->len = len * times;
+    for (; times > 0; times--)
+	memcpy(sb->buf + len*(times-1), mem, len);
+    sb->buf[sb->len] = '\0';
 
-	string = xmalloc(sizeof(char) * (len + 1));
-	memcpy(string, buf+begin_index, len);
-	string[len] = '\0';
-
-	return string;
+    return sb;
 }
 
-char *
-strbuf_substring_to_end(char **buf, uint32_t begin_index)
+StrBuf *
+strbuf_newf_n(uint32_t times, const char *fmt, ...)
 {
-	StringBuffer *strbuf = get_string_buffer(buf);
-	return strbuf_substring(buf, begin_index, strbuf->count);
+    va_list ap;
+    StrBuf *buf;
+
+    va_start(ap, fmt);
+    buf = strbuf_vnewf_n(times, fmt, ap);
+    va_end(ap);
+
+    return buf;
+}
+
+StrBuf *
+strbuf_vnewf_n(uint32_t times, const char *fmt, va_list ap)
+{
+    char *str;
+    int len;
+    StrBuf *buf;
+
+    len = vasprintf(&str, fmt, ap);
+    if (len < 0)
+        xalloc_die();
+
+    buf = strbuf_new_from_substring_n(times, str, 0, len);
+    free(str);
+    return buf;
 }
 
 void
-strbuf_free(char **buf)
+strbuf_free(StrBuf *sb)
 {
-	StringBuffer *strbuf = get_string_buffer(buf);
-	free(strbuf);
+    if (sb != NULL) {
+    	free(sb->buf);
+	free(sb);
+    }
 }
 
-static inline void
-ensure_capacity(char **buf, StringBuffer **strbuf, uint32_t min_capacity)
+char *
+strbuf_free_to_substring(StrBuf *sb, int32_t sp, int32_t ep)
 {
-	if (min_capacity > (*strbuf)->capacity) {
-		uint32_t max = (min_capacity > (*strbuf)->count ? (*strbuf)->count*2+2 : (*strbuf)->count);
-		min_capacity = MAX(min_capacity, max);
+    char *buf;
 
-		*strbuf = xrealloc(*strbuf, sizeof(StringBuffer) + sizeof(char) * min_capacity);
-		(*strbuf)->capacity = min_capacity;
-		*buf = (*strbuf)->value;
+    sp = normalize_strbuf_pos(sb, sp);
+    ep = normalize_strbuf_pos(sb, ep);
+    if (sp != 0)
+	memmove(sb->buf, sb->buf+sp, ep-sp);
+    sb->buf[ep-sp] = '\0';
+
+    /* Call realloc so that unused memory can be used for other purpose. */
+    if (sp == 0 && ep == sb->len)
+	buf = sb->buf;
+    else
+	buf = xrealloc(sb->buf, ep-sp+1);
+    free(sb);
+    return buf;
+}
+
+void
+strbuf_replace_char_n(StrBuf *sb, int32_t sp, int32_t ep, uint32_t times, char ch)
+{
+    strbuf_replace_substring_n(sb, sp, ep, times, &ch, 0, 1);
+}
+
+void
+strbuf_replace_data_n(StrBuf *sb, int32_t sp, int32_t ep, uint32_t times, const void *mem, uint32_t len)
+{
+    uint32_t addlen;
+    uint32_t dellen;
+
+    sp = normalize_strbuf_pos(sb, sp);
+    ep = normalize_strbuf_pos(sb, ep);
+    if (sp > ep)
+    	SWAP_INT32(sp, ep);
+
+    addlen = len * times;
+    dellen = ep-sp;
+    if (addlen != dellen) {
+    	strbuf_ensure_capacity(sb, sb->len+1-dellen+addlen);
+	memmove(sb->buf+sp+addlen, sb->buf+ep, sb->len+1-ep);
+	sb->len += addlen-dellen;
+    }
+    if (addlen > 0) {
+    	for (; times > 0; times--) {
+    	    memcpy(sb->buf+sp, mem, len);
+	    sp += len;
 	}
+    }
 }
 
 void
-strbuf_ensure_capacity(char **buf, uint32_t min_capacity)
+strbuf_replace_substring_n(StrBuf *sb, int32_t sp, int32_t ep, uint32_t times, const char *substr, int32_t subsp, int32_t subep)
 {
-	StringBuffer *strbuf = get_string_buffer(buf);
-	ensure_capacity(buf, &strbuf, min_capacity);
-}
+    subsp = normalize_str_pos(substr, subsp);
+    subep = normalize_str_pos(substr, subep);
+    if (subsp > subep)
+    	SWAP_INT32(subsp, subep);
 
-void
-strbuf_set_length(char **buf, uint32_t new_length)
-{
-	StringBuffer *strbuf = get_string_buffer(buf);
-	ensure_capacity(buf, &strbuf, new_length + 1);
-	//memclear(*buf + strbuf->count, new_length - strbuf->count + 1);
-	*buf[new_length] = '\0';
-	strbuf->count = new_length;
-}
-
-uint32_t
-strbuf_capacity(char **buf)
-{
-	StringBuffer *strbuf = get_string_buffer(buf);
-	return strbuf->capacity;
-}
-
-void
-strbuf_get_chars(char **buf, uint32_t src_offset, uint32_t src_end, char *dst, uint32_t dst_offset)
-{
-	if (src_offset < src_end)
-		memcpy(dst+dst_offset, buf+src_offset, src_end-src_offset);
-}
-
-uint32_t
-strbuf_length(char **buf)
-{
-	StringBuffer *strbuf = get_string_buffer(buf);
-	return strbuf->count;
-}
-
-void
-strbuf_append_char(char **buf, char ch)
-{
-	StringBuffer *strbuf = get_string_buffer(buf);
-
-	strbuf->count++;
-	ensure_capacity(buf, &strbuf, strbuf->count + 1);
-	(*buf)[strbuf->count-1] = ch;
-	(*buf)[strbuf->count] = '\0';
-}
-
-void
-strbuf_append(char **buf, const char *string)
-{
-	strbuf_append_substring(buf, string, 0, strlen(string));
-}
-
-void
-strbuf_insert_char(char **buf, uint32_t offset, char ch)
-{
-	StringBuffer *strbuf = get_string_buffer(buf);
-	strbuf->count++;
-	ensure_capacity(buf, &strbuf, strbuf->count + 1);
-	memmove(*buf + offset + 1, *buf + offset, strbuf->count - offset);
-	(*buf)[offset] = ch;
-}
-
-void
-strbuf_insert(char **buf, uint32_t offset, const char *string)
-{
-	strbuf_insert_substring(buf, offset, string, 0, strlen(string));
+    strbuf_replace_data_n(sb, sp, ep, times, substr+subsp, subep-subsp);
 }
 
 int
-strbuf_appendf(char **buf, const char *format, ...)
+strbuf_replacef_n(StrBuf *sb, int32_t sp, int32_t ep, uint32_t times, const char *fmt, ...)
 {
-	va_list ap;
-	int rc;
-	char *tmp = NULL;
+    va_list ap;
+    int len;
 
-	va_start(ap, format);
-	rc = vasprintf(&tmp, format, ap);
-	if (rc > 0 && tmp != NULL)
-		strbuf_append(buf, tmp);
-	if (tmp != NULL)
-		free(tmp);
-	va_end(ap);
+    va_start(ap, fmt);
+    len = strbuf_vreplacef_n(sb, sp, ep, times, fmt, ap);
+    va_end(ap);
 
-	return rc;
+    return len;
 }
 
 int
-strbuf_insertf(char **buf, uint32_t offset, const char *format, ...)
+strbuf_vreplacef_n(StrBuf *sb, int32_t sp, int32_t ep, uint32_t times, const char *fmt, va_list ap)
 {
-	va_list ap;
-	int rc;
-	char *tmp = NULL;
+    char *str;
+    int len;
 
-	va_start(ap, format);
-	rc = vasprintf(&tmp, format, ap);
-	if (rc > 0 && tmp != NULL)
-		strbuf_insert(buf, offset, tmp);
-	if (tmp != NULL)
-		free(tmp);
-	va_end(ap);
+    sp = normalize_strbuf_pos(sb, sp);
+    ep = normalize_strbuf_pos(sb, ep);
+    if (sp > ep)
+    	SWAP_INT32(sp, ep);
 
-	return rc;
+    len = vasprintf(&str, fmt, ap);
+    if (len < 0)
+        xalloc_die();
+
+    strbuf_replace_substring_n(sb, sp, ep, times, str, 0, len);
+    free(str);
+    return len;
 }
 
 void
-strbuf_set(char **buf, const char *string)
+strbuf_reverse_substring(StrBuf *sb, int32_t sp, int32_t ep)
 {
-	StringBuffer *strbuf = get_string_buffer(buf);
-	size_t len = strlen(string);
+    sp = normalize_strbuf_pos(sb, sp);
+    ep = normalize_strbuf_pos(sb, ep);
 
-	strbuf->count = len;
-	ensure_capacity(buf, &strbuf, strbuf->count + 1);
-	memcpy(*buf, string, len + 1);
-}
-
-int
-strbuf_setf(char **buf, const char *format, ...)
-{
-	va_list ap;
-	int rc;
-	char *tmp = NULL;
-
-	va_start(ap, format);
-	rc = vasprintf(&tmp, format, ap);
-	if (rc > 0 && tmp != NULL)
-		strbuf_set(buf, tmp);
-	if (tmp != NULL)
-		free(tmp);
-	va_end(ap);
-
-	return rc;
+    while (sp < ep) {
+    	SWAP_INT32(sb->buf[sp], sb->buf[ep]);
+    	sp++;
+	ep--;
+    }
 }
 
 void
-strbuf_delete(char **buf, uint32_t start, uint32_t end)
+strbuf_repeat_substring(StrBuf *sb, int32_t sp, int32_t ep, uint32_t times)
 {
-	StringBuffer *strbuf = get_string_buffer(buf);
+    int32_t addlen;
 
-/*	if (start < 0)
-		start += strbuf->count;
-	if (end < 0)
-		end += strbuf->count;*/
+    sp = normalize_strbuf_pos(sb, sp);
+    ep = normalize_strbuf_pos(sb, ep);
 
-	if (start < end) {
-		memmove(*buf + start, *buf + end, strbuf->count - end + 1);
-		strbuf->count -= end - start;
+    addlen = (ep-sp) * (times - 1);
+    if (addlen != 0) {
+    	uint32_t p;
+
+    	strbuf_ensure_capacity(sb, sb->len+1+addlen);
+	memmove(sb->buf+sp+addlen, sb->buf+ep, sb->len+1-ep);
+	sb->len += addlen;
+
+	p = ep;
+    	for (; times > 0; times--) {
+    	    memmove(sb->buf+p, sb->buf+sp, ep-sp);
+	    p += ep-sp;
 	}
+    }
 }
 
 void
-strbuf_delete_char(char **buf, uint32_t offset)
+strbuf_set_length(StrBuf *sb, uint32_t new_length)
 {
-	StringBuffer *strbuf = get_string_buffer(buf);
-
-	if (offset < 0)
-		offset += strbuf->count;
-
-	memmove(*buf + offset, *buf + offset + 1, strbuf->count - offset + 1);
-	strbuf->count--;
+    strbuf_ensure_capacity(sb, new_length+1);
+    sb->buf[new_length] = '\0';
+    sb->len = new_length;
 }
 
+/* Note: The terminating null-byte counts as 1 in min_capacity */
 void
-strbuf_replace(char **buf, uint32_t start, uint32_t end, const char *string)
+strbuf_ensure_capacity(StrBuf *sb, uint32_t min_capacity)
 {
-	strbuf_replace_substring(buf, start, end, string, 0, strlen(string));
-}
-
-/**
- * Return a newly allocated regular string, while freeing the string
- * buffer.
- */
-char *
-strbuf_free_to_string(char **buf)
-{
-	StringBuffer *strbuf = get_string_buffer(buf);
-	memmove(strbuf, *buf, strbuf->count + 1);
-	return (char *) strbuf;
-}
-
-/**
- * Update the length of the buffer, so that the first null-byte
- * marks the end of the string buffer.
- *
- * This is useful when the string in the buffer has been truncated
- * or extended by some non-strbuf function.
- */
-void
-strbuf_update_length(char **buf)
-{
-	StringBuffer *strbuf = get_string_buffer(buf);
-	uint32_t c;
-
-	for (c = 0; c < strbuf->capacity; c++) {
-		if (buf[c] == '\0') {
-			strbuf->count = c;
-			return;
-		}
-	}
-}
-
-void
-strbuf_replace_substring(char **buf, uint32_t start, uint32_t end,
-		const char *string, uint32_t substart, uint32_t subend)
-{
-	StringBuffer *strbuf = get_string_buffer(buf);
-	size_t len = subend - substart;
-	int32_t diff;
-
-	/*if (start < 0)
-		start += strbuf->count;
-	if (end < 0)
-		end += strbuf->count;*/
-
-	diff = len - (end-start);
-	if (diff < 0) {
-		memmove(*buf+start+len, *buf+end, strbuf->count+1-end);
-	} else if (diff > 0) {
-		ensure_capacity(buf, &strbuf, strbuf->count+diff+1);
-		memmove(*buf+start+len, *buf+end, strbuf->count+1-end);	
-	}
-	memcpy(*buf+start, string+substart, len);
-	strbuf->count += diff;
+    if (min_capacity > sb->capacity) {
+	sb->capacity = MAX(min_capacity, sb->len*2+2); /* MAX -> max */
+    	sb->buf = xrealloc(sb->buf, sb->capacity * sizeof(char));
+	if (sb->len == 0)
+    	    sb->buf[0] = '\0';
+    }
 }
 
 char *
-strbuf_new_from_substring(const char *string, uint32_t substart,
-		uint32_t subend)
+strbuf_substring(StrBuf *sb, int32_t sp, int32_t ep)
 {
-	char *buf;
-	size_t len = subend - substart;
+    char *str;
 
-	buf = new_strbuf(len + 1 + DEFAULT_CAPACITY, len);
-	memcpy(buf, string+substart, len);
-	buf[len] = '\0';
+    sp = normalize_strbuf_pos(sb, sp);
+    ep = normalize_strbuf_pos(sb, ep);
+    if (sp > ep)
+    	SWAP_INT32(sp, ep);
 
-	return buf;
+    str = xmalloc((ep-sp+1) * sizeof(char));
+    memcpy(str, sb->buf+sp, (ep-sp+1) * sizeof(char));
+    str[ep-sp] = '\0';
+
+    return str;
+}
+
+char
+strbuf_char_at(StrBuf *sb, int32_t sp)
+{
+    return sb->buf[normalize_strbuf_pos(sb, sp)];
+}
+
+#if 0
+char
+strbuf_set_char_at(StrBuf *sb, int32_t sp, char chr)
+{
+    char old;
+
+    sp = normalize_strbuf_pos(sb, sp);
+    old = str[sp];
+    str[sp] = chr;
+    if (sp == sb->len) {
+        sb->len++;
+        strbuf_ensure_capacity(sb, sb->len+1);
+        str[sb->len] = '\0'
+    }
+    return old;
 }
 
 void
-strbuf_insert_substring(char **buf, uint32_t offset, const char *string,
-		uint32_t substart, uint32_t subend)
+strbuf_replace_strbuf(StrBuf *sb, int32_t sp, int32_t ep, StrBuf *strbuf)
 {
-	StringBuffer *strbuf = get_string_buffer(buf);
-	size_t len = subend - substart;
-
-	ensure_capacity(buf, &strbuf, strbuf->count + len + 1);
-	memmove(*buf + offset + len, *buf + offset, strbuf->count - offset + 1);
-	memcpy(*buf + offset, string+substart, len);
-	strbuf->count += len;
+    strbuf_replace_data_n(sb,sp,ep,1,strbuf->buf,strbuf->len);
 }
 
-void
-strbuf_append_substring(char **buf, const char *string,
-		uint32_t substart, uint32_t subend)
+char
+strbuf_delete_char(StrBuf *sb, int32_t sp)
 {
-	StringBuffer *strbuf = get_string_buffer(buf);
-	size_t len = subend - substart;
 
-	ensure_capacity(buf, &strbuf, strbuf->count + len + 1);
-	memcpy(*buf + strbuf->count, string+substart, len);
-	strbuf->count += len;
-	(*buf)[strbuf->count] = '\0';
 }
 
-char *
-strbuf_new_from_substring_to_end(const char *string, uint32_t substart)
-{
-	return strbuf_new_from_substring(string, substart, strlen(string));
-}
-
-void
-strbuf_insert_substring_to_end(char **buf, uint32_t offset,
-		const char *string,	uint32_t substart)
-{
-	return strbuf_insert_substring(buf, offset, string, substart,
-			strlen(string));
-}
-
-void
-strbuf_append_substring_to_end(char **buf, const char *string,
-		uint32_t substart)
-{
-	return strbuf_append_substring(buf, string, substart, strlen(string));
-}
-
-inline void
-strbuf_set_char_at(char **buf, uint32_t index, char ch)
-{
-	(*buf)[index] = ch;
-}
-
-inline void
-strbuf_clear(char **buf)
-{
-	strbuf_set_length(buf, 0);
-}
+#endif

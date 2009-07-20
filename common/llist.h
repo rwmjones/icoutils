@@ -1,32 +1,40 @@
 /* llist.h - A linked list with a container object (unlike GList)
  *
- * Copyright (C) 1998-2005 Oskar Liljeblad
+ * Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2008
+ * Oskar Liljeblad
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * GNU Library General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 #ifndef COMMON_LLIST_H
 #define COMMON_LLIST_H
 
-#include <sys/types.h>		/* POSIX */
-#include <stdint.h>		/* POSIX/Gnulib */
-#include "common.h"
-#include "iterator.h"
+#include <stdint.h>		/* Gnulib/C99/POSIX */
+#include <stdbool.h>		/* Gnulib/C99/POSIX */
 
 typedef struct _LList LList;
 typedef struct _LNode LNode;
+typedef struct _LListIterator LListIterator;
+
+struct _LListIterator {
+    bool (*has_next)(LListIterator *it);
+    void *(*next)(LListIterator *it);
+    void (*remove)(LListIterator *it);
+    void *p0;
+    void *p1;
+};
 
 LList *llist_new(void);
 void llist_free(LList *list);
@@ -62,8 +70,8 @@ LList *llist_clone(LList *list);
 void **llist_to_array(LList *list);
 void **llist_to_null_terminated_array(LList *list);
 
-void llist_iterate(LList *list, IteratorFunc iterator_func);
-Iterator *llist_iterator(LList *list);
+void llist_iterate(LList *list, void (*iterator_func)());
+void llist_iterator(LList *list, LListIterator *it);
 
 void llist_reverse(LList *list);
 

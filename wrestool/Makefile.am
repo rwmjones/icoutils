@@ -9,8 +9,8 @@ wrestool_SOURCES = \
   fileread.h
 
 wrestool_LDADD = \
-  ../common/libcommon.la \
-  ../lib/libgnu.la
+  ../common/libcommon.a \
+  ../lib/libgnu.a
 
 man_MANS = \
   wrestool.1

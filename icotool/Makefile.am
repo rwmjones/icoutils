@@ -12,8 +12,8 @@ icotool_SOURCES = \
 
 icotool_LDADD = \
   @PNG_LIBS@ \
-  ../common/libcommon.la \
-  ../lib/libgnu.la
+  ../common/libcommon.a \
+  ../lib/libgnu.a
 
 man_MANS = \
   icotool.1

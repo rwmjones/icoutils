@@ -1,9 +1,9 @@
-/* Duplicate a size-bounded string.
-   Copyright (C) 2003 Free Software Foundation, Inc.
+/* Substitute for and wrapper around <stdarg.h>.
+   Copyright (C) 2008 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
+   the Free Software Foundation; either version 3, or (at your option)
    any later version.
 
    This program is distributed in the hope that it will be useful,
@@ -13,18 +13,21 @@
 
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
-#if HAVE_STRNDUP
+#ifndef _GL_STDARG_H
 
-/* Get strndup() declaration.  */
-#include <string.h>
+@PRAGMA_SYSTEM_HEADER@
 
-#else
+/* The include_next requires a split double-inclusion guard.  */
+#@INCLUDE_NEXT@ @NEXT_STDARG_H@
 
-#include <stddef.h>
+#ifndef _GL_STDARG_H
+#define _GL_STDARG_H
 
-/* Return a newly allocated copy of at most N bytes of STRING.  */
-extern char *strndup (const char *string, size_t n);
-
+#ifndef va_copy
+# define va_copy(a,b) ((a) = (b))
 #endif
+
+#endif /* _GL_STDARG_H */
+#endif /* _GL_STDARG_H */

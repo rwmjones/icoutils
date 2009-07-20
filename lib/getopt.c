@@ -2,50 +2,33 @@
    NOTE: getopt is now part of the C library, so if you don't know what
    "Keep this file name-space clean" means, talk to drepper@gnu.org
    before changing it!
-   Copyright (C) 1987,88,89,90,91,92,93,94,95,96,98,99,2000,2001,2002,2003,2004
+   Copyright (C) 1987,88,89,90,91,92,93,94,95,96,98,99,2000,2001,2002,2003,2004,2006,2008
 	Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
-   This program is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation; either version 3 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 
-   You should have received a copy of the GNU General Public License along
-   with this program; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+   You should have received a copy of the GNU General Public License
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
-/* This tells Alpha OSF/1 not to define a getopt prototype in <stdio.h>.
-   Ditto for AIX 3.2 and <stdlib.h>.  */
-#ifndef _NO_PROTO
-# define _NO_PROTO
-#endif
-
-#ifdef HAVE_CONFIG_H
+#ifndef _LIBC
 # include <config.h>
 #endif
 
+#include "getopt.h"
+
 #include <stdio.h>
-
-/* This needs to come after some library #include
-   to get __GNU_LIBRARY__ defined.  */
-#ifdef	__GNU_LIBRARY__
-/* Don't include stdlib.h for non-GNU C libraries because some of them
-   contain conflicting prototypes for getopt.  */
-# include <stdlib.h>
-# include <unistd.h>
-#endif	/* GNU C library.  */
-
+#include <stdlib.h>
 #include <string.h>
-
-#ifdef VMS
-# include <unixlib.h>
-#endif
+#include <unistd.h>
 
 #ifdef _LIBC
 # include <libintl.h>
@@ -76,7 +59,6 @@
    GNU application programs can use a third alternative mode in which
    they can distinguish the relative order of options and other arguments.  */
 
-#include "getopt.h"
 #include "getopt_int.h"
 
 /* For communication from `getopt' to the caller.
@@ -118,16 +100,9 @@ int optopt = '?';
 static struct _getopt_data getopt_data;
 
 
-#ifndef __GNU_LIBRARY__
-
-/* Avoid depending on library functions or files
-   whose names are inconsistent.  */
-
-#ifndef getenv
+#if defined HAVE_DECL_GETENV && !HAVE_DECL_GETENV
 extern char *getenv ();
 #endif
-
-#endif /* not __GNU_LIBRARY__ */
 
 #ifdef _LIBC
 /* Stored original parameters.
@@ -556,10 +531,7 @@ _getopt_internal_r (int argc, char **argv, const char *optstring,
 		  int old_flags2 = ((_IO_FILE *) stderr)->_flags2;
 		  ((_IO_FILE *) stderr)->_flags2 |= _IO_FLAGS2_NOTCANCEL;
 
-		  if (_IO_fwide (stderr, 0) > 0)
-		    __fwprintf (stderr, L"%s", buf);
-		  else
-		    fputs (buf, stderr);
+		  __fxprintf (NULL, "%s", buf);
 
 		  ((_IO_FILE *) stderr)->_flags2 = old_flags2;
 		  _IO_funlockfile (stderr);
@@ -634,10 +606,7 @@ _getopt_internal_r (int argc, char **argv, const char *optstring,
 			  ((_IO_FILE *) stderr)->_flags2
 			    |= _IO_FLAGS2_NOTCANCEL;
 
-			  if (_IO_fwide (stderr, 0) > 0)
-			    __fwprintf (stderr, L"%s", buf);
-			  else
-			    fputs (buf, stderr);
+			  __fxprintf (NULL, "%s", buf);
 
 			  ((_IO_FILE *) stderr)->_flags2 = old_flags2;
 			  _IO_funlockfile (stderr);
@@ -674,10 +643,7 @@ _getopt_internal_r (int argc, char **argv, const char *optstring,
 			  ((_IO_FILE *) stderr)->_flags2
 			    |= _IO_FLAGS2_NOTCANCEL;
 
-			  if (_IO_fwide (stderr, 0) > 0)
-			    __fwprintf (stderr, L"%s", buf);
-			  else
-			    fputs (buf, stderr);
+			  __fxprintf (NULL, "%s", buf);
 
 			  ((_IO_FILE *) stderr)->_flags2 = old_flags2;
 			  _IO_funlockfile (stderr);
@@ -751,10 +717,7 @@ _getopt_internal_r (int argc, char **argv, const char *optstring,
 		  int old_flags2 = ((_IO_FILE *) stderr)->_flags2;
 		  ((_IO_FILE *) stderr)->_flags2 |= _IO_FLAGS2_NOTCANCEL;
 
-		  if (_IO_fwide (stderr, 0) > 0)
-		    __fwprintf (stderr, L"%s", buf);
-		  else
-		    fputs (buf, stderr);
+		  __fxprintf (NULL, "%s", buf);
 
 		  ((_IO_FILE *) stderr)->_flags2 = old_flags2;
 		  _IO_funlockfile (stderr);
@@ -817,10 +780,7 @@ _getopt_internal_r (int argc, char **argv, const char *optstring,
 		int old_flags2 = ((_IO_FILE *) stderr)->_flags2;
 		((_IO_FILE *) stderr)->_flags2 |= _IO_FLAGS2_NOTCANCEL;
 
-		if (_IO_fwide (stderr, 0) > 0)
-		  __fwprintf (stderr, L"%s", buf);
-		else
-		  fputs (buf, stderr);
+		__fxprintf (NULL, "%s", buf);
 
 		((_IO_FILE *) stderr)->_flags2 = old_flags2;
 		_IO_funlockfile (stderr);
@@ -868,10 +828,7 @@ _getopt_internal_r (int argc, char **argv, const char *optstring,
 		    int old_flags2 = ((_IO_FILE *) stderr)->_flags2;
 		    ((_IO_FILE *) stderr)->_flags2 |= _IO_FLAGS2_NOTCANCEL;
 
-		    if (_IO_fwide (stderr, 0) > 0)
-		      __fwprintf (stderr, L"%s", buf);
-		    else
-		      fputs (buf, stderr);
+		    __fxprintf (NULL, "%s", buf);
 
 		    ((_IO_FILE *) stderr)->_flags2 = old_flags2;
 		    _IO_funlockfile (stderr);
@@ -940,10 +897,7 @@ _getopt_internal_r (int argc, char **argv, const char *optstring,
 		    int old_flags2 = ((_IO_FILE *) stderr)->_flags2;
 		    ((_IO_FILE *) stderr)->_flags2 |= _IO_FLAGS2_NOTCANCEL;
 
-		    if (_IO_fwide (stderr, 0) > 0)
-		      __fwprintf (stderr, L"%s", buf);
-		    else
-		      fputs (buf, stderr);
+		    __fxprintf (NULL, "%s", buf);
 
 		    ((_IO_FILE *) stderr)->_flags2 = old_flags2;
 		    _IO_funlockfile (stderr);
@@ -985,10 +939,7 @@ _getopt_internal_r (int argc, char **argv, const char *optstring,
 			    ((_IO_FILE *) stderr)->_flags2
 			      |= _IO_FLAGS2_NOTCANCEL;
 
-			    if (_IO_fwide (stderr, 0) > 0)
-			      __fwprintf (stderr, L"%s", buf);
-			    else
-			      fputs (buf, stderr);
+			    __fxprintf (NULL, "%s", buf);
 
 			    ((_IO_FILE *) stderr)->_flags2 = old_flags2;
 			    _IO_funlockfile (stderr);
@@ -1027,10 +978,7 @@ _getopt_internal_r (int argc, char **argv, const char *optstring,
 			    ((_IO_FILE *) stderr)->_flags2
 			      |= _IO_FLAGS2_NOTCANCEL;
 
-			    if (_IO_fwide (stderr, 0) > 0)
-			      __fwprintf (stderr, L"%s", buf);
-			    else
-			      fputs (buf, stderr);
+			    __fxprintf (NULL, "%s", buf);
 
 			    ((_IO_FILE *) stderr)->_flags2 = old_flags2;
 			    _IO_funlockfile (stderr);
@@ -1101,10 +1049,7 @@ _getopt_internal_r (int argc, char **argv, const char *optstring,
 			int old_flags2 = ((_IO_FILE *) stderr)->_flags2;
 			((_IO_FILE *) stderr)->_flags2 |= _IO_FLAGS2_NOTCANCEL;
 
-			if (_IO_fwide (stderr, 0) > 0)
-			  __fwprintf (stderr, L"%s", buf);
-			else
-			  fputs (buf, stderr);
+			__fxprintf (NULL, "%s", buf);
 
 			((_IO_FILE *) stderr)->_flags2 = old_flags2;
 			_IO_funlockfile (stderr);

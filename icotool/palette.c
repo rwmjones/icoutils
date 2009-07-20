@@ -13,16 +13,16 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 #include <config.h>
-#include <stdint.h>		/* POSIX/Gnulib */
+#include <stdint.h>		/* Gnulib/POSIX */
 #include <stdlib.h>		/* C89 */
+#include "xalloc.h"		/* Gnulib */
 #include "icotool.h"
 #include "common/hmap.h"
-#include "common/memory.h"
 #include "common/common.h"
 
 typedef struct {
@@ -34,7 +34,8 @@ typedef struct {
 
 struct _Palette {
 	HMap *map;
-	Iterator *it;
+	HMapIterator it;
+	bool it_init;
 };
 
 static uint32_t
@@ -60,18 +61,16 @@ palette_new(void)
 {
 	Palette *palette = xmalloc(sizeof(Palette));
 	palette->map = hmap_new();
-	palette->it = NULL;
-	hmap_set_hash_function(palette->map, (HashFunc) color_hash);
-	hmap_set_compare_function(palette->map, (CompareFunc) color_compare);
+	palette->it_init = false;
+	hmap_set_hash_fn(palette->map, (hash_fn_t) color_hash);
+	hmap_set_compare_fn(palette->map, (comparison_fn_t) color_compare);
 	return palette;
 }
 
 void
 palette_free(Palette *palette)
 {
-	if (palette->it != NULL)
-		iterator_free(palette->it);
-	hmap_iterate_values(palette->map, free);
+	hmap_foreach_value(palette->map, free);
 	hmap_free(palette->map);
 	free(palette);
 }
@@ -94,28 +93,30 @@ palette_add(Palette *palette, uint8_t r, uint8_t g, uint8_t b)
 bool
 palette_next(Palette *palette, uint8_t *r, uint8_t *g, uint8_t *b)
 {
-	if (palette->it == NULL)
-		palette->it = hmap_value_iterator(palette->map);
-	if (iterator_has_next(palette->it)) {
-		PaletteColor *color = iterator_next(palette->it);
+	if (!palette->it_init) {
+		hmap_iterator(palette->map, &palette->it);
+		palette->it_init = true;
+	}
+	if (palette->it.has_next(&palette->it)) {
+		PaletteColor *color = palette->it.next(&palette->it);
 		*r = color->red;
 		*g = color->green;
 		*b = color->blue;
 		return true;
 	}
-	iterator_free(palette->it);
-	palette->it = NULL;
+	palette->it_init = false;
 	return false;
 }
 
 void
 palette_assign_indices(Palette *palette)
 {
-	Iterator *it = hmap_value_iterator(palette->map);
+	HMapIterator it;
 	uint32_t c;
 
-	for (c = 0; iterator_has_next(it); c++) {
-		PaletteColor *color = iterator_next(it);
+	hmap_iterator(palette->map, &it);
+	for (c = 0; it.has_next(&it); c++) {
+		PaletteColor *color = it.next(&it);
 		color->index = c;
 	}
 }

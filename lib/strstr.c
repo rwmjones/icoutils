@@ -1,119 +1,83 @@
-/* Copyright (C) 1994, 1999, 2002-2003 Free Software Foundation, Inc.
-This file is part of the GNU C Library.
+/* Copyright (C) 1991,92,93,94,96,97,98,2000,2004,2007,2008 Free Software
+   Foundation, Inc.
+   This file is part of the GNU C Library.
 
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2, or (at your option)
-any later version.
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 3, or (at your option)
+   any later version.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+   You should have received a copy of the GNU General Public License along
+   with this program; if not, write to the Free Software Foundation,
+   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
-/*
- * My personal strstr() implementation that beats most other algorithms.
- * Until someone tells me otherwise, I assume that this is the
- * fastest implementation of strstr() in C.
- * I deliberately chose not to comment it.  You should have at least
- * as much fun trying to understand it, as I had to write it :-).
- *
- * Stephen R. van den Berg, berg@pool.informatik.rwth-aachen.de	*/
+/* This particular implementation was written by Eric Blake, 2008.  */
 
-#if HAVE_CONFIG_H
+#ifndef _LIBC
 # include <config.h>
 #endif
 
+/* Specification of strstr.  */
 #include <string.h>
 
-typedef unsigned chartype;
+#include <stdbool.h>
 
-#undef strstr
+#ifndef _LIBC
+# define __builtin_expect(expr, val)   (expr)
+#endif
 
+#define RETURN_TYPE char *
+#define AVAILABLE(h, h_l, j, n_l)			\
+  (!memchr ((h) + (h_l), '\0', (j) + (n_l) - (h_l))	\
+   && ((h_l) = (j) + (n_l)))
+#include "str-two-way.h"
+
+/* Return the first occurrence of NEEDLE in HAYSTACK.  Return HAYSTACK
+   if NEEDLE is empty, otherwise NULL if NEEDLE is not found in
+   HAYSTACK.  */
 char *
-strstr (const char *phaystack, const char *pneedle)
+strstr (const char *haystack_start, const char *needle_start)
 {
-  register const unsigned char *haystack, *needle;
-  register chartype b, c;
+  const char *haystack = haystack_start;
+  const char *needle = needle_start;
+  size_t needle_len; /* Length of NEEDLE.  */
+  size_t haystack_len; /* Known minimum length of HAYSTACK.  */
+  bool ok = true; /* True if NEEDLE is prefix of HAYSTACK.  */
 
-  haystack = (const unsigned char *) phaystack;
-  needle = (const unsigned char *) pneedle;
+  /* Determine length of NEEDLE, and in the process, make sure
+     HAYSTACK is at least as long (no point processing all of a long
+     NEEDLE if HAYSTACK is too short).  */
+  while (*haystack && *needle)
+    ok &= *haystack++ == *needle++;
+  if (*needle)
+    return NULL;
+  if (ok)
+    return (char *) haystack_start;
 
-  b = *needle;
-  if (b != '\0')
-    {
-      haystack--;				/* possible ANSI violation */
-      do
-	{
-	  c = *++haystack;
-	  if (c == '\0')
-	    goto ret0;
-	}
-      while (c != b);
+  /* Reduce the size of haystack using strchr, since it has a smaller
+     linear coefficient than the Two-Way algorithm.  */
+  needle_len = needle - needle_start;
+  haystack = strchr (haystack_start + 1, *needle_start);
+  if (!haystack || __builtin_expect (needle_len == 1, 0))
+    return (char *) haystack;
+  needle -= needle_len;
+  haystack_len = (haystack > haystack_start + needle_len ? 1
+		  : needle_len + haystack_start - haystack);
 
-      c = *++needle;
-      if (c == '\0')
-	goto foundneedle;
-      ++needle;
-      goto jin;
-
-      for (;;)
-        {
-          register chartype a;
-	  register const unsigned char *rhaystack, *rneedle;
-
-	  do
-	    {
-	      a = *++haystack;
-	      if (a == '\0')
-		goto ret0;
-	      if (a == b)
-		break;
-	      a = *++haystack;
-	      if (a == '\0')
-		goto ret0;
-shloop:;    }
-          while (a != b);
-
-jin:	  a = *++haystack;
-	  if (a == '\0')
-	    goto ret0;
-
-	  if (a != c)
-	    goto shloop;
-
-	  rhaystack = haystack-- + 1;
-	  rneedle = needle;
-	  a = *rneedle;
-
-	  if (*rhaystack == a)
-	    do
-	      {
-		if (a == '\0')
-		  goto foundneedle;
-		++rhaystack;
-		a = *++needle;
-		if (*rhaystack != a)
-		  break;
-		if (a == '\0')
-		  goto foundneedle;
-		++rhaystack;
-		a = *++needle;
-	      }
-	    while (*rhaystack == a);
-
-	  needle = rneedle;		   /* took the register-poor approach */
-
-	  if (a == '\0')
-	    break;
-        }
-    }
-foundneedle:
-  return (char*) haystack;
-ret0:
-  return 0;
+  /* Perform the search.  Abstract memory is considered to be an array
+     of 'unsigned char' values, not an array of 'char' values.  See
+     ISO C 99 section 6.2.6.1.  */
+  if (needle_len < LONG_NEEDLE_THRESHOLD)
+    return two_way_short_needle ((const unsigned char *) haystack,
+				 haystack_len,
+				 (const unsigned char *) needle, needle_len);
+  return two_way_long_needle ((const unsigned char *) haystack, haystack_len,
+			      (const unsigned char *) needle, needle_len);
 }
+
+#undef LONG_NEEDLE_THRESHOLD

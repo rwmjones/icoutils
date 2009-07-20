@@ -1,42 +1,41 @@
 /* string-utils.c - Functions dealing with string contents.
  *
- * Copyright (C) 1998-2005 Oskar Liljeblad
+ * Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2008
+ * Oskar Liljeblad
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * GNU Library General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 #if HAVE_CONFIG_H
 #include <config.h>
 #endif
 #include <ctype.h>		/* C89 */
-#include <stdarg.h>		/* C89 */
-#include <stdio.h>		/* C89 */
-#include <string.h>		/* C89 */
-#include <stdlib.h>		/* C89 */
+#include <stdarg.h>		/* Gnulib/C89 */
+#include <stdio.h>		/* Gnulib/C89 */
+#include <string.h>		/* Gnulib/C89 */
+#include <stdlib.h>		/* Gnulib/C89 */
 #include "xalloc.h"		/* Gnulib */
-#include "strndup.h"		/* Gnulib */
 #include "xvasprintf.h"		/* Gnulib */
-#include "common.h"
-#include "error.h"
-#include "string-utils.h"
-#include "memory.h"
+#include "common.h"		/* common */
+#include "error.h"		/* common */
+#include "string-utils.h"	/* common */
 
 /**
  * Return a zero-based of a character in a string.
  */
-inline int
+/*inline*/ int
 strindex(const char *str, char ch)
 {
 	char *pos = strchr(str, ch);
@@ -341,7 +340,7 @@ string_strip_trailing_c(char *str, char stripchar)
 	return b-a;
 }
 
-/* FIXME: document */
+/* XXX: document */
 int
 string_strip_leading(char *str, const char *stripchars)
 {
@@ -357,7 +356,7 @@ string_strip_leading(char *str, const char *stripchars)
 	return a-b;
 }
 
-/* FIXME: document */
+/* XXX: document */
 int
 string_strip_leading_c(char *str, char stripchar)
 {

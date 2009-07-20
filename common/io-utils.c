@@ -1,20 +1,20 @@
 /* io-utils.c - Various utilities dealing with files.
  *
- * Copyright (C) 1998-2005 Oskar Liljeblad
+ * Copyright (C) 1998-2005, 2008 Oskar Liljeblad
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * GNU Library General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 #if HAVE_CONFIG_H
@@ -48,39 +48,21 @@
 #ifndef WIFEXITED
 # define WIFEXITED(stat_val) (((stat_val) & 255) == 0)
 #endif
-/* As recommended by autoconf for AC_HEADER_SYS_TIME */
-#if TIME_WITH_SYS_TIME
-# include <sys/time.h>
-# include <time.h>
-#else
-# if HAVE_SYS_TIME_H
-#  include <sys/time.h>
-# else
-#  include <time.h>
-# endif
-#endif
+# include <sys/time.h>		/* Gnulib/POSIX */
+# include <time.h>		/* Gnulib/POSIX */
 /* POSIX */
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#if HAVE_FCNTL_H
-#include <fcntl.h>
-#endif
-#include <sys/stat.h>
-/* C89 */
-#include <stdio.h>
-#include <stdlib.h>
-#include <errno.h>
-/* gnulib */
-#include "getline.h"
-#include "xalloc.h"
-#include "xvasprintf.h"
-/* common */
-#include "memory.h"
-#include "strbuf.h"
-#include "error.h"
-#include "string-utils.h"
-#include "llist.h"
+#include <unistd.h>		/* Gnulib/POSIX */
+#include <fcntl.h>		/* Gnulib/POSIX */
+#include <sys/stat.h>		/* Gnulib/POSIX */
+#include <stdio.h>		/* C89 */
+#include <stdlib.h>		/* C89 */
+#include <errno.h>		/* C89 */
+#include "xalloc.h"		/* Gnulib */
+#include "xvasprintf.h"		/* Gnulib */
+#include "strbuf.h"		/* common */
+#include "error.h"		/* common */
+#include "string-utils.h"	/* common */
+#include "llist.h"		/* common */
 
 /**
  * Return true if the file exists, even if it may be a symbolic
@@ -133,6 +115,7 @@ file_size(const char *file)
  * @param in
  *   File to read from.
  */
+#if 0
 char *
 read_line(FILE *in)
 {
@@ -145,6 +128,7 @@ read_line(FILE *in)
 
 	return out;
 }
+#endif
 
 /**
  * Create a temporary file. This file will be created with
@@ -200,6 +184,7 @@ create_temporary_file(const char *base)
 	return name;
 }
 
+#if 0
 char *
 backticks(const char *program, char *const args[], int *status)
 {
@@ -207,7 +192,7 @@ backticks(const char *program, char *const args[], int *status)
 	int child_pid;
 	FILE *pipe_file;
 	char *line;
-	char *out;
+	StrBuf *out;
 
 	if (pipe(child_pipe) == -1)
 		return NULL;
@@ -236,7 +221,7 @@ backticks(const char *program, char *const args[], int *status)
 	if (out == NULL)
 		return NULL;
 	while ((line = read_line(pipe_file)) != NULL) {
-		strbuf_append(&out, line);
+		strbuf_append(out, line);
 		free(line);
 	}
 	if (errno != 0)
@@ -247,8 +232,9 @@ backticks(const char *program, char *const args[], int *status)
 	if (fclose(pipe_file) != 0)
 		return NULL;
 
-	return strbuf_free_to_string(&out);
+	return strbuf_free_to_string(out);
 }
+#endif
 
 /**
  * Read a directory into a glib list. Each list entry should

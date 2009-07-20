@@ -1,19 +1,18 @@
 /* vasprintf and asprintf with out-of-memory checking.
-   Copyright (C) 2002-2004 Free Software Foundation, Inc.
+   Copyright (C) 2002-2004, 2006-2008 Free Software Foundation, Inc.
 
-   This program is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation; either version 3 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 
-   You should have received a copy of the GNU General Public License along
-   with this program; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+   You should have received a copy of the GNU General Public License
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 #ifndef _XVASPRINTF_H
 #define _XVASPRINTF_H
@@ -23,7 +22,7 @@
 
 #ifndef __attribute__
 /* This feature is available in gcc versions 2.5 and later.  */
-# if __GNUC__ < 2 || (__GNUC__ == 2 && __GNUC_MINOR__ < 5) || __STRICT_ANSI__
+# if __GNUC__ < 2 || (__GNUC__ == 2 && __GNUC_MINOR__ < 5)
 #  define __attribute__(Spec) /* empty */
 # endif
 /* The __-protected variants of `format' and `printf' attributes
@@ -34,14 +33,12 @@
 # endif
 #endif
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif
 
-/* Write formatted output to a string dynamically allocated with malloc().
-   If the memory allocation succeeds, store the address of the string in
-   *RESULT and return the number of resulting bytes, excluding the trailing
-   NUL.  Upon [ENOMEM] memory allocation error, call xalloc_die.
+/* Write formatted output to a string dynamically allocated with malloc(),
+   and return it.  Upon [ENOMEM] memory allocation error, call xalloc_die.
    On some other error
      - [EOVERFLOW] resulting string length is > INT_MAX,
      - [EINVAL] invalid format string,
@@ -52,7 +49,7 @@ extern char *xasprintf (const char *format, ...)
 extern char *xvasprintf (const char *format, va_list args)
        __attribute__ ((__format__ (__printf__, 1, 0)));
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 }
 #endif
 

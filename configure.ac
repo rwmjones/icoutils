@@ -1,27 +1,26 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.59)
-AC_INIT(icoutils, 0.26.0, oskar@osk.mine.nu)
+AC_INIT(icoutils, 0.27.0, oskar@osk.mine.nu)
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([icotool/icotool.h])
 AM_MAINTAINER_MODE
 
 # Stuff for the config.h.in file
 AC_CONFIG_HEADERS(config.h)
+AC_GNU_SOURCE
+AC_DEFINE_DIR(LOCALEDIR, datadir/locale, [Directory where gettext translations are kept.])
 #AH_TEMPLATE([PKGUSERDIR], [User directory for program files])
-#AC_GNU_SOURCE # NOTE - done by gl_EARLY below; commenting here silences bootstrap warnings
-AH_TEMPLATE(LOCALEDIR, [Directory where gettext translations are kept.])
-AC_DEFINE_DIR(LOCALEDIR, datadir/locale)
-
-# Gnulib
-gl_MODULES([dirname dup2 getline getopt gettext gettimeofday lstat malloc memchr memmove memset minmax regex stat stdbool stdint strcase strdup strerror strndup strstr vasprintf version-etc progname xalloc xalloc-die xvasprintf])
-gl_EARLY
-gl_INIT
 
 # Checks for programs.
 AC_PROG_CC
 AC_PROG_LN_S
-AC_PROG_LIBTOOL
+AC_PROG_RANLIB
+# AC_PROG_LIBTOOL
+
+# Gnulib
+gl_EARLY
+gl_INIT
 
 # Gettext
 AM_GNU_GETTEXT([external])
@@ -32,15 +31,16 @@ AC_HEADER_STDC
 AC_HEADER_DIRENT
 AC_HEADER_SYS_WAIT
 AC_HEADER_TIME
-AC_CHECK_HEADERS([byteswap.h errno.h fcntl.h getopt.h limits.h sys/stat.h sys/time.h sys/types.h unistd.h])
+#AC_CHECK_HEADERS([byteswap.h errno.h fcntl.h getopt.h limits.h sys/stat.h sys/time.h sys/types.h unistd.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_INLINE
 AC_C_CONST
 AC_C_BIGENDIAN
-AC_TYPE_OFF_T
-AC_TYPE_SIZE_T
-AC_TYPE_MODE_T
+#AC_TYPE_OFF_T
+#AC_TYPE_SIZE_T
+#AC_TYPE_MODE_T
+AC_CHECK_TYPES([comparison_fn_t])
 
 # Checks for library functions.
 AC_FUNC_FORK

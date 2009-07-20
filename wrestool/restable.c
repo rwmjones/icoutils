@@ -18,12 +18,13 @@
  */
 
 #include <config.h>
-#include <inttypes.h>			/* ? */
-#include "gettext.h"			/* Gnulib */
+#include <inttypes.h>          /* ? */
+#include "gettext.h"           /* Gnulib */
 #define _(s) gettext(s)
 #define N_(s) gettext_noop(s)
-#include "common/intparse.h"
-#include "common/memory.h"
+#include "common/intutil.h"
+#include "xalloc.h"            /* Gnulib */
+#include "minmax.h"            /* Gnulib */
 #include "common/error.h"
 #include "wrestool.h"
 #include "win32.h"
