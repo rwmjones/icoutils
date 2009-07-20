@@ -34,14 +34,15 @@
 #  endif
 # endif
 #endif
-#include <stdint.h>		/* POSIX/Gnulib */
-#include <stdio.h>		/* C89 */
-#include <stdbool.h>		/* POSIX/Gnulib */
-#include <stdlib.h>		/* C89 */
-#include "gettext.h"
+#include <stdint.h>            /* Gnulib/POSIX */
+#include <stdio.h>             /* C89 */
+#include <stdbool.h>           /* Gnulib/POSIX */
+#include <stdlib.h>            /* C89 */
+#include "gettext.h"           /* Gnulib */
+#include "xalloc.h"            /* Gnulib */
+#include "minmax.h"            /* Gnulib */
 #define _(s) gettext(s)
 #define N_(s) gettext_noop(s)
-#include "common/memory.h"
 #include "common/io-utils.h"
 #include "common/error.h"
 #include "icotool.h"
@@ -94,7 +95,7 @@ create_icon(int filec, char **filev, int raw_filec, char** raw_filev, CreateName
 	
 	filec += raw_filec;
 
-	img = xmalloc_clear(filec * sizeof(*img));
+	img = xzalloc(filec * sizeof(*img));
 
 	for (c = 0; c < filec; c++) {
 		char header[8];
@@ -354,12 +355,12 @@ create_icon(int filec, char **filev, int raw_filec, char** raw_filev, CreateName
 				 * not necessary according to the original specs, but many
 				 * programs that read icons assume it. Especially gdk-pixbuf.
 				 */
-			    	memclear(&color, sizeof(Win32RGBQuad));
+			    	memset(&color, 0, sizeof(Win32RGBQuad));
 				for (d = palette_count(img[c].palette); d < 1 << img[c].bit_count; d++)
 					fwrite(&color, sizeof(Win32RGBQuad), 1, out);
 			}
 
-			img[c].image_data = xmalloc_clear(img[c].image_size);
+			img[c].image_data = xzalloc(img[c].image_size);
 
 			for (d = 0; d < img[c].height; d++) {
 				png_bytep row = img[c].row_datas[img[c].height - d - 1];
@@ -426,7 +427,7 @@ create_icon(int filec, char **filev, int raw_filec, char** raw_filev, CreateName
 		}
 		png_destroy_read_struct(&img[c].png_ptr, &img[c].info_ptr, NULL);
 		fclose(img[c].in);
-		memclear(&img[c], sizeof(*img));
+		memset(&img[c], 0, sizeof(*img));
 	}
 
 	free(outname);

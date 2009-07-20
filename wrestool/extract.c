@@ -21,10 +21,11 @@
 #include "gettext.h"			/* Gnulib */
 #define _(s) gettext(s)
 #define N_(s) gettext_noop(s)
-#include "common/memory.h"
+#include "xalloc.h"                    /* Gnulib */
 #include "common/error.h"
-#include "common/intparse.h"
+#include "common/intutil.h"
 #include "win32.h"
+#include "win32-endian.h"
 #include "fileread.h"
 #include "wrestool.h"
 

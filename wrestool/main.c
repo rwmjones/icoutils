@@ -23,11 +23,11 @@
 #define N_(s) gettext_noop(s)
 #include "version-etc.h"        	/* Gnulib */
 #include "progname.h"			/* Gnulib */
-#include "strcase.h"			/* Gnulib */
+//#include "strcase.h"			/* Gnulib */
 #include "dirname.h"			/* Gnulib */
 #include "common/error.h"
-#include "common/memory.h"
-#include "common/intparse.h"
+#include "xalloc.h"                    /* Gnulib */
+#include "common/intutil.h"
 #include "common/io-utils.h"
 #include "common/string-utils.h"
 #include "wrestool.h"

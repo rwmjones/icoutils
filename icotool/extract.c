@@ -47,7 +47,6 @@
 #include "common/string-utils.h"
 #include "common/io-utils.h"
 #include "common/error.h"
-#include "common/memory.h"
 #include "icotool.h"
 #include "win32-endian.h"
 

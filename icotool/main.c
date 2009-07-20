@@ -17,23 +17,23 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#include <config.h>
-#include <unistd.h>	/* POSIX */
-#include <errno.h>	/* C89 */
-#include <stdio.h>	/* C89 */
-#include <getopt.h>	/* GNU Libc/Gnulib */
-#include <string.h>	/* C89 */
-#include <stdlib.h>	/* C89 */
+ #include <config.h>
+#include <unistd.h>            /* POSIX */
+#include <errno.h>             /* C89 */
+#include <stdio.h>             /* C89 */
+#include <getopt.h>            /* Gnulib/GNU Libc */
+#include <string.h>            /* C89 */
+#include <stdlib.h>            /* C89 */
 #include "gettext.h"
 #define _(s) gettext(s)
 #define N_(s) gettext_noop(s)
-#include "progname.h"	/* Gnulib */
-#include "version-etc.h"	/* Gnulib */
-#include "common/memory.h"
+#include "progname.h"          /* Gnulib */
+#include "version-etc.h"       /* Gnulib */
+#include "xalloc.h"            /* Gnulib */
 #include "common/error.h"
 #include "common/strbuf.h"
 #include "common/string-utils.h"
-#include "common/intparse.h"
+#include "common/intutil.h"
 #include "common/io-utils.h"
 #include "icotool.h"
 
@@ -120,14 +120,15 @@ create_outfile_gen(char **out)
 }
 
 static FILE *
-extract_outfile_gen(char **outname, int w, int h, int bc, int i)
+extract_outfile_gen(char **outname_ptr, int w, int h, int bc, int i)
 {
-    char *inname = *outname;
+    char *inname = *outname_ptr;
 
     if (output == NULL || is_directory(output)) {
+	StrBuf *outname;
 	char *inbase;
 
-	*outname = strbuf_new();
+	outname = strbuf_new();
 	if (output != NULL) {
 	    strbuf_append(outname, output);
 	    if (!ends_with(output, "/"))
@@ -141,15 +142,15 @@ extract_outfile_gen(char **outname, int w, int h, int bc, int i)
 	    strbuf_append(outname, inbase);
 	}
 	strbuf_appendf(outname, "_%d_%dx%dx%d.png", i, w, h, bc);
-	*outname = strbuf_free_to_string(outname);
-	return fopen(*outname, "wb");
+	*outname_ptr = strbuf_free_to_string(outname);
+	return fopen(*outname_ptr, "wb");
     }
     else if (strcmp(output, "-") == 0) {
-	*outname = xstrdup(_("(standard out)"));
+	*outname_ptr = xstrdup(_("(standard out)"));
 	return stdout;
     }
 
-    *outname = xstrdup(output);
+    *outname_ptr = xstrdup(output);
     return fopen(output, "wb");
 }
 
