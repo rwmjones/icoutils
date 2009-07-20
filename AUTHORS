@@ -10,5 +10,8 @@ Colin Watson <cjwatson@debian.org>
  - creating and maintaining the Debian package of icoutils
  - manual pages
 
+Sean Peirce <seanp71@bellatlantic.net>
+ - created the RPM spec file
+
 Marcin Siennicki
  - BMP extraction support for wrestool

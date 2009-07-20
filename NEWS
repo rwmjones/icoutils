@@ -4,6 +4,7 @@
   Get rid of many files in the common subdirectory in the source code.
   Updated FSF address.
   Add support for extracting BMP files to wrestool. (Marcin Siennicki)
+  Updated the RPM .spec file a little.
 
 2005-04-30: icoutils 0.26.0 released.
   First release on Savannah.
