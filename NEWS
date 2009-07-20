@@ -2,6 +2,7 @@
   Use more Gnulib modules: byteswap
   Remove Gnulib modules no longer in CVS: stat
   Get rid of many files in the common subdirectory in the source code.
+  Updated FSF address.
 
 2005-04-30: icoutils 0.26.0 released.
   First release on Savannah.
