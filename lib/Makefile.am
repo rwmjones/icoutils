@@ -236,9 +236,9 @@ EXTRA_DIST += intprops.h
 
 ## begin gnulib module link-warning
 
-LINK_WARNING_H=$(top_srcdir)/./link-warning.h
+#LINK_WARNING_H=$(top_srcdir)/./link-warning.h
 
-EXTRA_DIST += $(top_srcdir)/./link-warning.h
+#EXTRA_DIST += $(top_srcdir)/./link-warning.h
 
 ## end   gnulib module link-warning
 
