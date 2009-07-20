@@ -9,3 +9,6 @@ Contributors
 Colin Watson <cjwatson@debian.org>
  - creating and maintaining the Debian package of icoutils
  - manual pages
+
+Marcin Siennicki
+ - BMP extraction support for wrestool
