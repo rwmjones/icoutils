@@ -26,7 +26,7 @@
 //#include "strcase.h"			/* Gnulib */
 #include "dirname.h"			/* Gnulib */
 #include "common/error.h"
-#include "xalloc.h"                    /* Gnulib */
+#include "xalloc.h"			/* Gnulib */
 #include "common/intutil.h"
 #include "common/io-utils.h"
 #include "common/string-utils.h"
@@ -115,6 +115,8 @@ get_extract_extension (char *type)
     type = res_type_string_to_id(type);
     STRIP_RES_ID_FORMAT(type);
     if (parse_uint16(type, &value)) {
+	if (value == 2)
+	    return ".bmp";
 	if (value == 14)
 	    return ".ico";
 	if (value == 12)
