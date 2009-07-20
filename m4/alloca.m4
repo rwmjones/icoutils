@@ -1,5 +1,5 @@
-# alloca.m4 serial 5
-dnl Copyright (C) 2002, 2003, 2004 Free Software Foundation, Inc.
+# alloca.m4 serial 8
+dnl Copyright (C) 2002-2004, 2006, 2007 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
@@ -17,24 +17,28 @@ AC_DEFUN([gl_FUNC_ALLOCA],
 
   # Define an additional variable used in the Makefile substitution.
   if test $ac_cv_working_alloca_h = yes; then
-    AC_EGREP_CPP([Need own alloca], [
+    AC_CACHE_CHECK([for alloca as a compiler built-in], [gl_cv_rpl_alloca], [
+      AC_EGREP_CPP([Need own alloca], [
 #if defined __GNUC__ || defined _AIX || defined _MSC_VER
-	Need own alloca
+        Need own alloca
 #endif
-      ],
-      [AC_DEFINE(HAVE_ALLOCA, 1,
-	    [Define to 1 if you have `alloca' after including <alloca.h>,
-	     a header that may be supplied by this distribution.])
-       ALLOCA_H=alloca.h],
-      [ALLOCA_H=])
+        ], [gl_cv_rpl_alloca=yes], [gl_cv_rpl_alloca=no])
+    ])
+    if test $gl_cv_rpl_alloca = yes; then
+      dnl OK, alloca can be implemented through a compiler built-in.
+      AC_DEFINE([HAVE_ALLOCA], 1,
+        [Define to 1 if you have 'alloca' after including <alloca.h>,
+         a header that may be supplied by this distribution.])
+      ALLOCA_H=alloca.h
+    else
+      dnl alloca exists as a library function, i.e. it is slow and probably
+      dnl a memory leak. Don't define HAVE_ALLOCA in this case.
+      ALLOCA_H=
+    fi
   else
     ALLOCA_H=alloca.h
   fi
   AC_SUBST([ALLOCA_H])
-
-  AC_DEFINE(HAVE_ALLOCA_H, 1,
-    [Define HAVE_ALLOCA_H for backward compatibility with older code
-     that includes <alloca.h> only if HAVE_ALLOCA_H is defined.])
 ])
 
 # Prerequisites of lib/alloca.c.
