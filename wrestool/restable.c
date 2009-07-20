@@ -18,13 +18,13 @@
  */
 
 #include <config.h>
-#include <inttypes.h>          /* ? */
-#include "gettext.h"           /* Gnulib */
+#include <inttypes.h>		/* ? */
+#include "gettext.h"		/* Gnulib */
 #define _(s) gettext(s)
 #define N_(s) gettext_noop(s)
 #include "common/intutil.h"
-#include "xalloc.h"            /* Gnulib */
-#include "minmax.h"            /* Gnulib */
+#include "xalloc.h"		/* Gnulib */
+#include "minmax.h"		/* Gnulib */
 #include "common/error.h"
 #include "wrestool.h"
 #include "win32.h"
@@ -457,7 +457,7 @@ read_library (WinLibrary *fi)
 			return false;
 		}
 
-		fi->first_resource = fi->memory + dir->virtual_address;
+		fi->first_resource = ((uint8_t *) fi->memory) + dir->virtual_address;
 		fi->is_PE_binary = true;
 		return true;
 	}
