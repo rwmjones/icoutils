@@ -1,7 +1,7 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.59)
-AC_INIT(icoutils, 0.27.0, oskar@osk.mine.nu)
+AC_INIT(icoutils, 0.27.0, frank.richter@gmail.com)
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([icotool/icotool.h])
 AM_MAINTAINER_MODE
