@@ -1,11 +1,15 @@
-2009-??-??: icoutils 0.27.0 released.
-  Use more Gnulib modules: byteswap (Oskar Liljeblad)
-  Remove Gnulib modules no longer in CVS: stat (Oskar Liljeblad)
-  Get rid of many files in the common subdirectory in the source code. (Oskar Liljeblad)
-  Updated FSF address. (Oskar Liljeblad)
-  Add support for extracting BMP files to wrestool. (Marcin Siennicki)
-  Updated the RPM .spec file a little. (Oskar Liljeblad)
+2009-??-??: icoutils 0.28.0 released.
   Maintainer position adopted by Frank Richter <frank.richter@gmail.com>.
+
+2009-06-29: icoutils 0.27.0 released. 
+  Maintenance release - minor fixes only.
+  Update web site address in RPM package.
+  Various Gnulib and build updates.
+  Get rid of many files in the common subdirectory in the source code.
+  Apply patch from Marcin Siennicki adding support to wrestool for
+  extracting BMP files - thanks!
+  Updated the RPM .spec file a little.
+  icotool: Be stricter when parsing command line arguments.
 
 2005-04-30: icoutils 0.26.0 released.
   First release on Savannah.
