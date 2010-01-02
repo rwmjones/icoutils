@@ -1,5 +1,13 @@
-2009-??-??: icoutils 0.28.0 released.
+2010-??-??: icoutils 0.29.0 released.
   Maintainer position adopted by Frank Richter <frank.richter@gmail.com>.
+
+2009-08-16: icoutils 0.28.0 released.
+  Maintenance release - minor fixes only.
+  Compile wrestool with win32-endian.c (from Martin Gieseking).
+  Update license to GPLv3.
+  Remove unnecessary (?) years in my copyright notices.
+  Remove unnecessary spaces in the RPM .spec file.
+  Updated Gnulib stuff and simplify some code in the process.
 
 2009-06-29: icoutils 0.27.0 released. 
   Maintenance release - minor fixes only.
