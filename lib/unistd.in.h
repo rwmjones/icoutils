@@ -3,7 +3,7 @@
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
+   the Free Software Foundation; either version 3, or (at your option)
    any later version.
 
    This program is distributed in the hope that it will be useful,
@@ -29,6 +29,9 @@
 #ifndef _GL_UNISTD_H
 #define _GL_UNISTD_H
 
+/* NetBSD 5.0 mis-defines NULL.  Also get size_t.  */
+#include <stddef.h>
+
 /* mingw doesn't define the SEEK_* or *_FILENO macros in <unistd.h>.  */
 #if !(defined SEEK_CUR && defined SEEK_END && defined SEEK_SET)
 # include <stdio.h>
@@ -41,6 +44,11 @@
 #if @GNULIB_WRITE@ && @REPLACE_WRITE@ && @GNULIB_UNISTD_H_SIGPIPE@
 /* Get ssize_t.  */
 # include <sys/types.h>
+#endif
+
+/* Get getopt(), optarg, optind, opterr, optopt.  */
+#if @GNULIB_UNISTD_H_GETOPT@
+# include <getopt.h>
 #endif
 
 #if @GNULIB_GETHOSTNAME@
@@ -137,7 +145,7 @@ extern int chown (const char *file, uid_t uid, gid_t gid);
 #  define close rpl_close
 extern int close (int);
 # endif
-#elif @UNISTD_H_HAVE_WINSOCK2_H@
+#elif @UNISTD_H_HAVE_WINSOCK2_H_AND_USE_SOCKETS@
 # undef close
 # define close close_used_without_requesting_gnulib_module_close
 #elif defined GNULIB_POSIXCHECK
@@ -150,10 +158,13 @@ extern int close (int);
 
 
 #if @GNULIB_DUP2@
-# if !@HAVE_DUP2@
+# if @REPLACE_DUP2@
+#  define dup2 rpl_dup2
+# endif
+# if !@HAVE_DUP2@ || @REPLACE_DUP2@
 /* Copy the file descriptor OLDFD into file descriptor NEWFD.  Do nothing if
    NEWFD = OLDFD, otherwise close NEWFD first if it is open.
-   Return 0 if successful, otherwise -1 and errno set.
+   Return newfd if successful, otherwise -1 and errno set.
    See the POSIX:2001 specification
    <http://www.opengroup.org/susv3xsh/dup2.html>.  */
 extern int dup2 (int oldfd, int newfd);
@@ -214,7 +225,11 @@ extern int fchdir (int /*fd*/);
 
 #  define dup rpl_dup
 extern int dup (int);
-#  define dup2 rpl_dup2
+
+#  if @REPLACE_DUP2@
+#   undef dup2
+#  endif
+#  define dup2 rpl_dup2_fchdir
 extern int dup2 (int, int);
 
 # endif
@@ -363,7 +378,6 @@ extern int gethostname(char *name, size_t len);
    See <http://www.opengroup.org/susv3xsh/getlogin.html>.
  */
 # if !@HAVE_DECL_GETLOGIN_R@
-#  include <stddef.h>
 extern int getlogin_r (char *name, size_t size);
 # endif
 #elif defined GNULIB_POSIXCHECK
@@ -524,7 +538,6 @@ extern int link (const char *path1, const char *path2);
    See the POSIX:2001 specification
    <http://www.opengroup.org/susv3xsh/readlink.html>.  */
 # if !@HAVE_READLINK@
-#  include <stddef.h>
 extern int readlink (const char *file, char *buf, size_t bufsize);
 # endif
 #elif defined GNULIB_POSIXCHECK
