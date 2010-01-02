@@ -1,4 +1,4 @@
-# This file specifies the origin of each file in the source code file
+# This document specifies the origin of each file in the source code
 # archive of this project. It is best viewed with a tab width of 46 or
 # greater.
 ABOUT-NLS	GNU gettext
@@ -13,18 +13,17 @@ NEWS	icoutils
 README	icoutils
 TODO	icoutils
 aclocal.m4	generated GNU Automake
-config.guess	GNU Libtool
 config.h.in	generated GNU Autoconf
-config.rpath	Gnulib
-config.sub	GNU Libtool
 configure	generated GNU Autoconf
 configure.ac	icoutils
-depcomp	GNU Automake
 icoutils.spec.in	icoutils
-install-sh	GNU Automake
-ltmain.sh	GNU Libtool
-missing	GNU Automake
-mkinstalldirs	GNU gettext
+build-aux/config.guess	GNU Automake
+build-aux/config.rpath	Gnulib
+build-aux/config.sub	GNU Automake
+build-aux/depcomp	GNU Automake
+build-aux/install-sh	GNU Automake
+build-aux/link-warning.h	Gnulib
+build-aux/missing	GNU Automake
 common/Makefile.am	icoutils
 common/Makefile.in	generated GNU Automake
 common/common.h	icoutils
@@ -76,32 +75,35 @@ icotool/win32-endian.h	icoutils
 icotool/win32.h	icoutils
 lib/Makefile.am	generated GNU gettext
 lib/Makefile.in	generated GNU Automake
-lib/alloca_.h	Gnulib
+lib/alloca.in.h	Gnulib
 lib/asnprintf.c	Gnulib
 lib/asprintf.c	Gnulib
 lib/basename.c	Gnulib
-lib/byteswap_.h	Gnulib
+lib/byteswap.in.h	Gnulib
 lib/dirname.c	Gnulib
 lib/dirname.h	Gnulib
 lib/dup2.c	Gnulib
+lib/errno.in.h	Gnulib
 lib/error.c	Gnulib
 lib/error.h	Gnulib
-lib/exit.h	Gnulib
 lib/exitfail.c	Gnulib
 lib/exitfail.h	Gnulib
+lib/float+.h	Gnulib
+lib/float.in.h	Gnulib
+lib/getdelim.c	Gnulib
 lib/getline.c	Gnulib
-lib/getline.h	Gnulib
-lib/getndelim2.c	Gnulib
-lib/getndelim2.h	Gnulib
 lib/getopt.c	Gnulib
+lib/getopt.in.h	Gnulib
 lib/getopt1.c	Gnulib
-lib/getopt_.h	Gnulib
 lib/getopt_int.h	Gnulib
+lib/getpagesize.c	Gnulib
 lib/gettext.h	Gnulib
 lib/gettimeofday.c	Gnulib
+lib/intprops.h	Gnulib
 lib/lstat.c	Gnulib
 lib/malloc.c	Gnulib
 lib/memchr.c	Gnulib
+lib/memchr.valgrind	Gnulib
 lib/memmove.c	Gnulib
 lib/memset.c	Gnulib
 lib/minmax.h	Gnulib
@@ -111,87 +113,114 @@ lib/printf-parse.c	Gnulib
 lib/printf-parse.h	Gnulib
 lib/progname.c	Gnulib
 lib/progname.h	Gnulib
-lib/stat-macros.h	Gnulib
-lib/stdbool_.h	Gnulib
-lib/stdint_.h	Gnulib
-lib/strcase.h	Gnulib
+lib/realloc.c	Gnulib
+lib/size_max.h	Gnulib
+lib/stdarg.in.h	Gnulib
+lib/stdbool.in.h	Gnulib
+lib/stdint.in.h	Gnulib
+lib/stdio-write.c	Gnulib
+lib/stdio.in.h	Gnulib
+lib/stdlib.in.h	Gnulib
+lib/str-two-way.h	Gnulib
 lib/strcasecmp.c	Gnulib
 lib/strdup.c	Gnulib
-lib/strdup.h	Gnulib
 lib/strerror.c	Gnulib
+lib/string.in.h	Gnulib
+lib/strings.in.h	Gnulib
 lib/stripslash.c	Gnulib
 lib/strncasecmp.c	Gnulib
 lib/strndup.c	Gnulib
-lib/strndup.h	Gnulib
 lib/strnlen.c	Gnulib
 lib/strstr.c	Gnulib
-lib/strstr.h	Gnulib
+lib/sys_stat.in.h	Gnulib
+lib/sys_time.in.h	Gnulib
+lib/unistd.in.h	Gnulib
 lib/vasnprintf.c	Gnulib
 lib/vasnprintf.h	Gnulib
 lib/vasprintf.c	Gnulib
-lib/vasprintf.h	Gnulib
 lib/version-etc.c	Gnulib
 lib/version-etc.h	Gnulib
+lib/wchar.in.h	Gnulib
 lib/xalloc-die.c	Gnulib
 lib/xalloc.h	Gnulib
 lib/xasprintf.c	Gnulib
 lib/xmalloc.c	Gnulib
 lib/xsize.h	Gnulib
+lib/xstrndup.c	Gnulib
+lib/xstrndup.h	Gnulib
 lib/xvasprintf.c	Gnulib
 lib/xvasprintf.h	Gnulib
-m4/ac_define_dir.m4	Autoconf Macro Archive
+m4/00gnulib.m4	Gnulib
 m4/alloca.m4	Gnulib
 m4/byteswap.m4	Gnulib
 m4/dirname.m4	Gnulib
 m4/dos.m4	Gnulib
+m4/double-slash-root.m4	Gnulib
 m4/dup2.m4	Gnulib
-m4/eoverflow.m4	Gnulib
+m4/errno_h.m4	Gnulib
 m4/error.m4	Gnulib
 m4/exitfail.m4	Gnulib
 m4/extensions.m4	Gnulib
+m4/float_h.m4	Gnulib
+m4/getdelim.m4	Gnulib
 m4/getline.m4	Gnulib
-m4/getndelim2.m4	Gnulib
 m4/getopt.m4	Gnulib
+m4/getpagesize.m4	Gnulib
 m4/gettext.m4	Gnulib
 m4/gettimeofday.m4	Gnulib
-m4/gnulib.m4	generated Gnulib
+m4/gnulib-common.m4	Gnulib
+m4/gnulib-comp.m4	generated Gnulib
 m4/iconv.m4	Gnulib
+m4/include_next.m4	Gnulib
+m4/inline.m4	Gnulib
+m4/intlmacosx.m4	Gnulib
 m4/intmax_t.m4	Gnulib
-m4/inttypes.m4	Gnulib
 m4/inttypes_h.m4	Gnulib
 m4/lib-ld.m4	Gnulib
 m4/lib-link.m4	Gnulib
 m4/lib-prefix.m4	Gnulib
-m4/longdouble.m4	Gnulib
 m4/longlong.m4	Gnulib
 m4/lstat.m4	Gnulib
+m4/malloc.m4	Gnulib
 m4/memchr.m4	Gnulib
 m4/memmove.m4	Gnulib
 m4/memset.m4	Gnulib
 m4/minmax.m4	Gnulib
+m4/mmap-anon.m4	Gnulib
+m4/multiarch.m4	Gnulib
 m4/nls.m4	Gnulib
-m4/onceonly_2_57.m4	Gnulib
+m4/onceonly.m4	Gnulib
 m4/po.m4	Gnulib
 m4/progtest.m4	Gnulib
-m4/signed.m4	Gnulib
+m4/realloc.m4	Gnulib
 m4/size_max.m4	Gnulib
-m4/ssize_t.m4	Gnulib
-m4/stat-macros.m4	Gnulib
+m4/stdarg.m4	Gnulib
 m4/stdbool.m4	Gnulib
 m4/stdint.m4	Gnulib
 m4/stdint_h.m4	Gnulib
+m4/stdio_h.m4	Gnulib
+m4/stdlib_h.m4	Gnulib
 m4/strcase.m4	Gnulib
 m4/strdup.m4	Gnulib
 m4/strerror.m4	Gnulib
+m4/string_h.m4	Gnulib
+m4/strings_h.m4	Gnulib
 m4/strndup.m4	Gnulib
 m4/strnlen.m4	Gnulib
 m4/strstr.m4	Gnulib
+m4/sys_stat_h.m4	Gnulib
+m4/sys_time_h.m4	Gnulib
+m4/unistd_h.m4	Gnulib
 m4/vasnprintf.m4	Gnulib
 m4/vasprintf.m4	Gnulib
+m4/version-etc.m4	Gnulib
+m4/wchar.m4	Gnulib
 m4/wchar_t.m4	Gnulib
 m4/wint_t.m4	Gnulib
 m4/xalloc.m4	Gnulib
 m4/xsize.m4	Gnulib
+m4/xstrndup.m4	Gnulib
+m4/xvasprintf.m4	Gnulib
 po/LINGUAS	icoutils
 po/Makefile.in.in	gettext
 po/Makevars	icoutils
