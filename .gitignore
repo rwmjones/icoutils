@@ -1,6 +1,5 @@
 aclocal.m4
 autom4te.cache/
-build-aux/
 common/Makefile.in
 config.h.in
 config.h.in~
