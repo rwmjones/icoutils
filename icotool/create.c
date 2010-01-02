@@ -33,13 +33,13 @@
 #  endif
 # endif
 #endif
-#include <stdint.h>            /* Gnulib/POSIX */
-#include <stdio.h>             /* C89 */
-#include <stdbool.h>           /* Gnulib/POSIX */
-#include <stdlib.h>            /* C89 */
-#include "gettext.h"           /* Gnulib */
-#include "xalloc.h"            /* Gnulib */
-#include "minmax.h"            /* Gnulib */
+#include <stdint.h>		/* Gnulib/POSIX */
+#include <stdio.h>		/* C89 */
+#include <stdbool.h>		/* Gnulib/POSIX */
+#include <stdlib.h>		/* C89 */
+#include "gettext.h"		/* Gnulib */
+#include "xalloc.h"		/* Gnulib */
+#include "minmax.h"		/* Gnulib */
 #define _(s) gettext(s)
 #define N_(s) gettext_noop(s)
 #include "common/io-utils.h"
