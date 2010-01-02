@@ -19,15 +19,7 @@
 #include <config.h>
 #include "win32-endian.h"
 
-#if HAVE_BYTESWAP_H
-#include <byteswap.h>			/* FIXME */
-#elif defined(__APPLE__)	
-#include <machine/byte_order.h>
-#define bswap_16(x) NXSwapShort(x)
-#define bswap_32(x) NXSwapInt(x)
-#define bswap_64(x) NXSwapLongLong(x)
-#endif
-
+#include <byteswap.h>			/* Gnulib */
 #define BSWAP16(x)  	((x) = bswap_16(x))
 #define BSWAP32(x)  	((x) = bswap_32(x))
 
