@@ -19,7 +19,7 @@ EXTRA_DIST = \
   MANIFEST.sources
 
 rpm: @PACKAGE@.spec
-	fakeroot rpm --clean -bb @PACKAGE@.spec
+	fakeroot rpmbuild --clean -bb @PACKAGE@.spec
 
 distclean-local:
 	-rm -f @PACKAGE@.spec
