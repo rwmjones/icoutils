@@ -94,6 +94,14 @@ and 32.
 
 In create mode, this option will allow you to specify a minimum bit depth
 for images in the icon file.
+.\".B \-m, \-\-min-bit-depth=\fICOUNT\fR
+.\"This option allows the number of bits per pixel in the image to be matched instead
+.\"(minimally).
+.\"See --bit-depth for details.
+.\"
+.\"In create mode, this option will allow you to specify a minimum bit depth
+.\"for images in the icon file.
+.\".TP
 .TP
 .B \-p, \-\-palette-size=\fIPIXELS\fR
 Similar to --index, but this option allows the number of colors in
@@ -184,8 +192,7 @@ Create an icon named `favicon.ico' with two images:
 .br
   $ \fBicotool -c -o favicon.ico mysite_32x32.png mysite_64x64.png\fP
 .SH AUTHOR
-The \fBicoutils\fP are currently maintained by Frank Richter <\fIfrank.richter@gmail.com\fP>
-and were originally written by Oskar Liljeblad <\fIoskar@osk.mine.nu\fP>
+The \fBicoutils\fP were written by Oskar Liljeblad <\fIoskar@osk.mine.nu\fP>.
 .SH COPYRIGHT
 Copyright \(co 1998-2005 Oskar Liljeblad
 

@@ -17,19 +17,20 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
- #include <config.h>
-#include <unistd.h>            /* POSIX */
-#include <errno.h>             /* C89 */
-#include <stdio.h>             /* C89 */
-#include <getopt.h>            /* Gnulib/GNU Libc */
-#include <string.h>            /* C89 */
-#include <stdlib.h>            /* C89 */
+#include <config.h>
+#include <unistd.h>		/* POSIX */
+#include <errno.h>		/* C89 */
+#include <stdio.h>		/* C89 */
+#include <getopt.h>		/* Gnulib/GNU Libc */
+#include <string.h>		/* C89 */
+#include <stdlib.h>		/* C89 */
 #include "gettext.h"
+#include "configmake.h"
 #define _(s) gettext(s)
 #define N_(s) gettext_noop(s)
-#include "progname.h"          /* Gnulib */
-#include "version-etc.h"       /* Gnulib */
-#include "xalloc.h"            /* Gnulib */
+#include "progname.h"		/* Gnulib */
+#include "version-etc.h"	/* Gnulib */
+#include "xalloc.h"		/* Gnulib */
 #include "common/error.h"
 #include "common/strbuf.h"
 #include "common/string-utils.h"
@@ -43,6 +44,7 @@ static int32_t image_index = -1;
 static int32_t width = -1;
 static int32_t height = -1;
 static int32_t bitdepth = -1;
+/*static uint32_t minbitdepth = 1;*/
 static int32_t palettesize = -1;
 static int32_t hotspot_x = 0;
 static int32_t hotspot_y = 0;
@@ -75,6 +77,7 @@ static struct option long_opts[] = {
     { "height", 		required_argument, 	NULL, 'h' },
     { "palette-size",		required_argument, 	NULL, 'p' },
     { "bit-depth",		required_argument, 	NULL, 'b' },
+    /*{ "min-bit-depth",          required_argument,      NULL, 'm' },*/
     { "hotspot-x",       	required_argument, 	NULL, 'X' },
     { "hotspot-y",       	required_argument, 	NULL, 'Y' },
     { "alpha-threshold", 	required_argument, 	NULL, 't' },
@@ -95,6 +98,8 @@ filter(int i, int w, int h, int bd, int ps, bool icon, int hx, int hy)
 	return false;
     if (bitdepth != -1 && bd != bitdepth)
 	return false;
+    /*if (bd < minbitdepth)
+        return false;*/
     if (palettesize != -1 && ps != palettesize)
 	return false;
     if ((icon_only && !icon) || (cursor_only && icon))
@@ -170,7 +175,8 @@ display_help(void)
     printf(_("  -w, --width=PIXELS           match width of image\n"));
     printf(_("  -h, --height=PIXELS          match height of image\n"));
     printf(_("  -p, --palette-size=COUNT     match number of colors in palette (or 0)\n"));
-    printf(_("  -b, --bit-depth=COUNT        match number of bits per pixel\n"));
+    printf(_("  -b, --bit-depth=COUNT        match or set number of bits per pixel\n"));
+    /*printf(_("  -m, --min-bit-depth=COUNT    match or set minimum number of bits per pixel\n"));*/
     printf(_("  -X, --hotspot-x=COORD        match or set cursor hotspot x-coordinate\n"));
     printf(_("  -Y, --hotspot-y=COORD        match or set cursor hotspot y-coordinate\n"));
     printf(_("  -t, --alpha-threshold=LEVEL  highest level in alpha channel indicating\n"
@@ -263,6 +269,10 @@ main(int argc, char **argv)
 	    if (!parse_int32(optarg, &bitdepth))
 		die(_("invalid bit-depth value: %s"), optarg);
 	    break;
+        /*case 'm':
+            if (!parse_uint32(optarg, &minbitdepth))
+                die(_("invalid minimum bit-depth value: %s"), optarg);
+            break;*/
 	case 'X':
 	    if (!parse_int32(optarg, &hotspot_x))
 		die(_("invalid hotspot-x value: %s"), optarg);
