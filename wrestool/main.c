@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include "gettext.h"			/* Gnulib */
+#include "configmake.h"
 #define _(s) gettext(s)
 #define N_(s) gettext_noop(s)
 #include "version-etc.h"        	/* Gnulib */
