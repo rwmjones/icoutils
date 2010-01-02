@@ -1,5 +1,6 @@
 bin_PROGRAMS = icotool
 
+# win32-endian.c should probably be moved to common
 icotool_SOURCES = \
   create.c \
   extract.c \

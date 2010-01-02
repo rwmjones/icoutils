@@ -1,12 +1,14 @@
 bin_PROGRAMS = wrestool
 
+# win32-endian.c should probably be moved to common
 wrestool_SOURCES = \
   extract.c \
   main.c \
   restable.c \
   wrestool.h \
   fileread.c \
-  fileread.h
+  fileread.h \
+  ../icotool/win32-endian.c
 
 wrestool_LDADD = \
   ../common/libcommon.a \
