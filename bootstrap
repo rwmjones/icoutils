@@ -1,3 +1,5 @@
 #!/bin/sh
 
+mkdir -p build-aux/
+cp config.rpath build-aux/
 aclocal -I m4 && autoheader && libtoolize --force -c && automake -a -c && autoconf 
