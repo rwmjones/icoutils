@@ -250,23 +250,23 @@ main(int argc, char **argv)
 	    output = optarg;
 	    break;
 	case 'i':
-	    if (!parse_int32(optarg, &image_index))
+	    if (!parse_int32(optarg, &image_index) || image_index < 0)
 		die(_("invalid index value: %s"), optarg);
 	    break;
 	case 'w':
-	    if (!parse_int32(optarg, &width))
+	    if (!parse_int32(optarg, &width) || width < 0)
 		die(_("invalid width value: %s"), optarg);
 	    break;
 	case 'h':
-	    if (!parse_int32(optarg, &height))
+	    if (!parse_int32(optarg, &height) || height < 0)
 		die(_("invalid height value: %s"), optarg);
 	    break;
 	case 'p':
-	    if (!parse_int32(optarg, &palettesize))
+	    if (!parse_int32(optarg, &palettesize) || palettesize < 0)
 		die(_("invalid palette-size value: %s"), optarg);
 	    break;
 	case 'b':
-	    if (!parse_int32(optarg, &bitdepth))
+	    if (!parse_int32(optarg, &bitdepth) || bitdepth < 0)
 		die(_("invalid bit-depth value: %s"), optarg);
 	    break;
         /*case 'm':
@@ -274,17 +274,17 @@ main(int argc, char **argv)
                 die(_("invalid minimum bit-depth value: %s"), optarg);
             break;*/
 	case 'X':
-	    if (!parse_int32(optarg, &hotspot_x))
+	    if (!parse_int32(optarg, &hotspot_x) || hotspot_x < 0)
 		die(_("invalid hotspot-x value: %s"), optarg);
 	    hotspot_x_set = true;
 	    break;
 	case 'Y':
-	    if (!parse_int32(optarg, &hotspot_y))
+	    if (!parse_int32(optarg, &hotspot_y) || hotspot_y < 0)
 		die(_("invalid hotspot-y value: %s"), optarg);
 	    hotspot_y_set = true;
 	    break;
 	case 't':
-	    if (!parse_int32(optarg, &alpha_threshold))
+	    if (!parse_int32(optarg, &alpha_threshold) || alpha_threshold < 0)
 		die(_("invalid alpha-threshold value: %s"), optarg);
 	    break;
 	case 'r':
