@@ -1,10 +1,10 @@
 /* A POSIX-like <errno.h>.
 
-   Copyright (C) 2008 Free Software Foundation, Inc.
+   Copyright (C) 2008-2009 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 3, or (at your option)
+   the Free Software Foundation; either version 2, or (at your option)
    any later version.
 
    This program is distributed in the hope that it will be useful,
@@ -18,7 +18,9 @@
 
 #ifndef _GL_ERRNO_H
 
+#if __GNUC__ >= 3
 @PRAGMA_SYSTEM_HEADER@
+#endif
 
 /* The include_next requires a split double-inclusion guard.  */
 #@INCLUDE_NEXT@ @NEXT_ERRNO_H@
@@ -30,13 +32,15 @@
 /* On native Windows platforms, many macros are not defined.  */
 # if (defined _WIN32 || defined __WIN32__) && ! defined __CYGWIN__
 
+/* POSIX says that EAGAIN and EWOULDBLOCK may have the same value.  */
+#  define EWOULDBLOCK     EAGAIN
+
 /* Values >= 100 seem safe to use.  */
 #  define ETXTBSY   100
 #  define GNULIB_defined_ETXTBSY 1
 
 /* These are intentionally the same values as the WSA* error numbers, defined
    in <winsock2.h>.  */
-#  define EWOULDBLOCK     10035
 #  define EINPROGRESS     10036
 #  define EALREADY        10037
 #  define ENOTSOCK        10038
@@ -139,6 +143,11 @@
 # ifndef ENOTSUP
 #  define ENOTSUP   2007
 #  define GNULIB_defined_ENOTSUP 1
+# endif
+
+# ifndef ESTALE
+#  define ESTALE    2009
+#  define GNULIB_defined_ESTALE 1
 # endif
 
 # ifndef ECANCELED
