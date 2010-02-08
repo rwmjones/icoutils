@@ -59,8 +59,8 @@ typedef struct {
     uint8_t height;
     uint8_t color_count;
     uint8_t reserved;
-    uint16_t hotspot_x;		/* sometimes planes... */
-    uint16_t hotspot_y;		/* sometimes bit_count... */
+    uint16_t hotspot_x;		/* hotspot_x for cursors, planes for icons */
+    uint16_t hotspot_y;		/* hotspot_y for cursors, bit_count for icons */
     uint32_t dib_size;
     uint32_t dib_offset;
 } Win32CursorIconFileDirEntry;

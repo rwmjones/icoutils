@@ -285,11 +285,11 @@ create_icon(int filec, char **filev, int raw_filec, char** raw_filev, CreateName
 		entry.height = (uint8_t)img[c].height;
 		entry.reserved = 0;
 		if (icon_mode) {
-			entry.hotspot_x = 0;	 /* some mistake this for planes (XXX) */
-			entry.hotspot_y = 0;	 /* some mistake this for bit_count (XXX) */
+			entry.hotspot_x = 1;	            /* color planes for icons */
+			entry.hotspot_y = img[c].bit_count; /* bit_count for icons */
 		} else {
-			entry.hotspot_x = hotspot_x;	 /* some mistake this for planes (XXX) */
-			entry.hotspot_y = hotspot_y;	 /* some mistake this for bit_count (XXX) */
+			entry.hotspot_x = hotspot_x;
+			entry.hotspot_y = hotspot_y;
 		}
 		entry.dib_offset = dib_start;
 		entry.color_count = (img[c].bit_count >= 8 ? 0 : 1 << img[c].bit_count);

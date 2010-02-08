@@ -1,5 +1,6 @@
 2010-??-??: icoutils 0.29.0 released.
   Maintainer position adopted by Frank Richter <frank.richter@gmail.com>.
+  Fixed icotool to correctly populate the planes and bit_count fields of Win32CursorIconFileDirEntry for icons (Joel Holdsworth).
 
 2009-08-16: icoutils 0.28.0 released.
   Maintenance release - minor fixes only.
