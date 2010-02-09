@@ -129,6 +129,7 @@ read_line(FILE *in)
 }
 #endif
 
+#if 0
 /**
  * Create a temporary file. This file will be created with
  * mode 0600 in the temporary directory unless `base' is an
@@ -182,6 +183,7 @@ create_temporary_file(const char *base)
 
 	return name;
 }
+#endif
 
 #if 0
 char *
