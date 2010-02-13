@@ -304,8 +304,11 @@ main(int argc, char **argv)
 
     if (extract_mode + create_mode + list_mode > 1)
 	die(_("multiple commands specified"));
-    if (extract_mode + create_mode + list_mode == 0)
-	die(_("missing argument\nTry `%s --help' for more information."), argv[0]);
+    if (extract_mode + create_mode + list_mode == 0) {
+	warn(_("missing argument"));
+	display_help();
+	exit (1);
+    }
     if (icon_only && cursor_only)
 	die(_("only one of --icon and --cursor may be specified"));
 
