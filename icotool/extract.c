@@ -100,7 +100,7 @@ extract_icons(FILE *in, char *inname, bool listmode, ExtractNameGen outfile_gen,
 	Win32CursorIconFileDirEntry *entries = NULL;
 	uint32_t offset;
 	uint32_t c, d;
-	int completed;
+	int completed = 0;
 	int matched = 0;
 
 	set_message_header(inname);
@@ -128,10 +128,10 @@ extract_icons(FILE *in, char *inname, bool listmode, ExtractNameGen outfile_gen,
 	}
 	offset = sizeof(Win32CursorIconFileDir) + dir.count * sizeof(Win32CursorIconFileDirEntry);
 
-	for (completed = 0; completed < dir.count; ) {
+	while(completed < dir.count) {
 		uint32_t min_offset = UINT32_MAX;
 		int previous = completed;
-
+		
 		for (c = 0; c < dir.count; c++) {
 			if (entries[c].dib_offset == offset) {
 				Win32BitmapInfoHeader bitmap;
@@ -145,9 +145,10 @@ extract_icons(FILE *in, char *inname, bool listmode, ExtractNameGen outfile_gen,
 				png_byte *row = NULL;
 				char *outname = NULL;
 				FILE *out = NULL;
+				int do_next = FALSE;
 
 				if (!xfread(&bitmap, sizeof(Win32BitmapInfoHeader), in))
-					goto local_cleanup;
+					goto done;
 
 				fix_win32_bitmap_info_header_endian(&bitmap);
 				/* Vista icon: it's just a raw PNG */
@@ -158,17 +159,19 @@ extract_icons(FILE *in, char *inname, bool listmode, ExtractNameGen outfile_gen,
 					image_size = entries[c].dib_size;
 					image_data = xmalloc(image_size);
 					if (!xfread(image_data, image_size, in))
-						goto local_cleanup;
+						goto done;
 					
 					if (!read_png (image_data, image_size, &bit_count, &width, &height))
-						goto local_cleanup;
+						goto done;
 					
 					completed++;
 					
 					if (!filter(completed, width, height, bitmap.bit_count, palette_count, dir.type == 1,
 							(dir.type == 1 ? 0 : entries[c].hotspot_x),
-							(dir.type == 1 ? 0 : entries[c].hotspot_y)))
+								(dir.type == 1 ? 0 : entries[c].hotspot_y))) {
+						do_next = TRUE;
 						goto done;
+					}
 					matched++;
 
 					if (listmode) {
@@ -186,7 +189,7 @@ extract_icons(FILE *in, char *inname, bool listmode, ExtractNameGen outfile_gen,
 
 						if (out == NULL) {
 							warn_errno(_("cannot create file"));
-							goto local_cleanup;
+							goto done;
 						}
 
 						restore_message_header();
@@ -203,11 +206,11 @@ extract_icons(FILE *in, char *inname, bool listmode, ExtractNameGen outfile_gen,
 				{
 					if (bitmap.size < sizeof(Win32BitmapInfoHeader)) {
 						warn(_("bitmap header is too short"));
-						goto local_cleanup;
+						goto done;
 					}
 					if (bitmap.compression != 0) {
 						warn(_("compressed image data not supported"));
-						goto local_cleanup;
+						goto done;
 					}
 					if (bitmap.x_pels_per_meter != 0)
 						warn(_("x_pels_per_meter field in bitmap should be zero"));
@@ -228,7 +231,7 @@ extract_icons(FILE *in, char *inname, bool listmode, ExtractNameGen outfile_gen,
 						palette_count = (bitmap.clr_used != 0 ? bitmap.clr_used : 1 << bitmap.bit_count);
 						palette = xmalloc(sizeof(Win32RGBQuad) * palette_count);
 						if (!xfread(palette, sizeof(Win32RGBQuad) * palette_count, in))
-							goto local_cleanup;
+							goto done;
 						offset += sizeof(Win32RGBQuad) * palette_count;
 					}
 
@@ -246,11 +249,11 @@ extract_icons(FILE *in, char *inname, bool listmode, ExtractNameGen outfile_gen,
 
 					image_data = xmalloc(image_size);
 					if (!xfread(image_data, image_size, in))
-						goto local_cleanup;
+						goto done;
 
 					mask_data = xmalloc(mask_size);
 					if (!xfread(mask_data, mask_size, in))
-						goto local_cleanup;
+						goto done;
 
 					offset += image_size;
 					offset += mask_size;
@@ -258,20 +261,22 @@ extract_icons(FILE *in, char *inname, bool listmode, ExtractNameGen outfile_gen,
 
 					if (!filter(completed, width, height, bitmap.bit_count, palette_count, dir.type == 1,
 							(dir.type == 1 ? 0 : entries[c].hotspot_x),
-							(dir.type == 1 ? 0 : entries[c].hotspot_y)))
+								(dir.type == 1 ? 0 : entries[c].hotspot_y))) {
+						do_next = TRUE;
 						goto done;
+					}
 					matched++;
 
 					if (!listmode) {
 						png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL /*user_error_fn, user_warning_fn*/);
 						if (!png_ptr) {
 							warn(_("cannot initialize PNG library"));
-							goto local_cleanup;
+							goto done;
 						}
 						info_ptr = png_create_info_struct(png_ptr);
 						if (!info_ptr) {
 							warn(_("cannot create PNG info structure - out of memory"));
-							goto local_cleanup;
+							goto done;
 						}
 
 						outname = inname;
@@ -281,7 +286,7 @@ extract_icons(FILE *in, char *inname, bool listmode, ExtractNameGen outfile_gen,
 
 						if (out == NULL) {
 							warn_errno(_("cannot create file"));
-							goto local_cleanup;
+							goto done;
 						}
 						png_init_io(png_ptr, out);
 
@@ -310,7 +315,7 @@ extract_icons(FILE *in, char *inname, bool listmode, ExtractNameGen outfile_gen,
 							if (bitmap.bit_count <= 16) {
 								if (color >= palette_count) {
 									warn("color out of range in image data");
-									goto local_cleanup;
+									goto done;
 								}
 								row[4*x+0] = palette[color].red;
 								row[4*x+1] = palette[color].green;
@@ -343,7 +348,8 @@ extract_icons(FILE *in, char *inname, bool listmode, ExtractNameGen outfile_gen,
 						/*restore_message_header();*/
 					}
 				}
-
+				
+			do_next = TRUE;
 			done:
 
 				if (row != NULL)
@@ -358,27 +364,16 @@ extract_icons(FILE *in, char *inname, bool listmode, ExtractNameGen outfile_gen,
 				}
 				if (out != NULL)
 					fclose(out);
-				continue;
-
-			local_cleanup:
-
-				/*restore_message_header();*/
-				if (row != NULL)
-					free(row);
-				if (palette != NULL)
-					free(palette);
-				if (image_data != NULL) {
-					free(image_data);
-					free(mask_data);
-				}
-				if (out != NULL)
-					fclose(out);
 				if (outname != NULL)
 					free(outname);
-				goto cleanup;
+				if (do_next == TRUE) {
+					continue;
+				} else {
+					goto cleanup;
+				}
 			} else {
 				if (entries[c].dib_offset > offset)
-						min_offset = MIN(min_offset, entries[c].dib_offset);
+					min_offset = MIN(min_offset, entries[c].dib_offset);
 			}
 		}
 
@@ -387,7 +382,11 @@ extract_icons(FILE *in, char *inname, bool listmode, ExtractNameGen outfile_gen,
 				warn(_("offset of bitmap header incorrect (too low)"));
 				goto cleanup;
 			}
-			warn(_("skipping %d bytes of garbage at %d"), min_offset-offset, offset);
+			if ((min_offset-offset) == 0) {
+				warn(_("invalid data at expected offset (unrecoverable)"));
+				goto cleanup;
+			}
+			warn(_("skipping %u bytes of garbage at %u"), min_offset-offset, offset);
 			fskip(in, min_offset - offset);
 			offset = min_offset;
 		}
