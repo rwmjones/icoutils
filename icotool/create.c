@@ -142,15 +142,7 @@ create_icon(int filec, char **filev, int raw_filec, char** raw_filev, CreateName
 		png_read_update_info(img[c].png_ptr, img[c].info_ptr);
 
 		img[c].width = png_get_image_width(img[c].png_ptr, img[c].info_ptr);
-		if (img[c].width > 256) {
-			warn("image too wide (max 256, was %d pixels)", img[c].width);
-			goto cleanup;
-		}
 		img[c].height = png_get_image_height(img[c].png_ptr, img[c].info_ptr);
-		if (img[c].height > 256) {
-			warn("image too tall (max 256, was %d pixels)", img[c].height);
-			goto cleanup;
-		}
 		
 		if (img[c].store_raw)
 		{
@@ -280,9 +272,18 @@ create_icon(int filec, char **filev, int raw_filec, char** raw_filev, CreateName
 	for (c = 0; c < filec; c++) {
 		Win32CursorIconFileDirEntry entry;
 
-		/* A dimension of 256 is stored as 0 in the entry */
-		entry.width = (uint8_t)img[c].width;
-		entry.height = (uint8_t)img[c].height;
+		/* If one of the dimensions is larger or equal to 256, both icon dimensions have
+		   to be stored as 0 in the entry. */
+		if ((img[c].width >= 256) || (img[c].height >= 256))
+		{
+			entry.width = 0;
+			entry.height = 0;
+		}
+		else
+		{
+			entry.width = img[c].width;
+			entry.height = img[c].height;
+		}
 		entry.reserved = 0;
 		if (icon_mode) {
 			entry.hotspot_x = 1;	            /* color planes for icons */
