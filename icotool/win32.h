@@ -47,7 +47,7 @@ typedef struct PACKED {
     uint16_t res_id;
 } Win32CursorIconDirEntry;
 
-typedef struct {
+typedef struct PACKED {
     uint16_t reserved;
     uint16_t type;
     uint16_t count;
