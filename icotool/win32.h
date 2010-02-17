@@ -36,7 +36,7 @@ typedef struct {
     uint16_t height;
 } Win32CursorDir;
 
-typedef struct {
+typedef struct PACKED {
     union {
 		Win32IconResDir icon;
 		Win32CursorDir cursor;
@@ -51,7 +51,7 @@ typedef struct {
     uint16_t reserved;
     uint16_t type;
     uint16_t count;
-    Win32CursorIconDirEntry entries[0] PACKED;
+    Win32CursorIconDirEntry entries[0];
 } Win32CursorIconDir;
 
 typedef struct {
