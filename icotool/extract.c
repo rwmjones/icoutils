@@ -356,8 +356,6 @@ extract_icons(FILE *in, char *inname, bool listmode, ExtractNameGen outfile_gen,
 					free(row);
 				if (palette != NULL)
 					free(palette);
-				if (outname != NULL)
-					free(outname);
 				if (image_data != NULL) {
 					free(image_data);
 					free(mask_data);
