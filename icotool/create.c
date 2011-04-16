@@ -425,7 +425,8 @@ create_icon(int filec, char **filev, int raw_filec, char** raw_filev, CreateName
 		{
 			png_read_end(img[c].png_ptr, img[c].info_ptr);
 		}
-		png_destroy_read_struct(&img[c].png_ptr, &img[c].info_ptr, NULL);
+		if (img[c].png_ptr)
+			png_destroy_read_struct(&img[c].png_ptr, &img[c].info_ptr, NULL);
 		fclose(img[c].in);
 		memset(&img[c], 0, sizeof(*img));
 	}
