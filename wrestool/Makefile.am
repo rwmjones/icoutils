@@ -11,6 +11,7 @@ wrestool_SOURCES = \
   ../icotool/win32-endian.c
 
 wrestool_LDADD = \
+  @INTLLIBS@ \
   ../common/libcommon.a \
   ../lib/libgnu.a
 
