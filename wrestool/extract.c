@@ -172,7 +172,7 @@ extract_group_icon_cursor_resource(WinLibrary *fi, WinResource *wr, char *lang,
 		    if (iconsize != icondir->entries[c].bytes_in_res) {
 			warn(_("%s: mismatch of size in icon resource `%s' and group (%d vs %d)"), fi->name, name, iconsize, icondir->entries[c].bytes_in_res);
 		    }
-		    size += iconsize; /* size += icondir->entries[c].bytes_in_res; */
+		    size += iconsize < icondir->entries[c].bytes_in_res ? icondir->entries[c].bytes_in_res : iconsize;
 
 		    /* cursor resources have two additional WORDs that contain
 		     * hotspot info */
