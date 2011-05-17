@@ -41,14 +41,14 @@ options starting with two dashes (`-').
 .TP
 .B \-x, \-\-extract
 Extract resources. (By default, resources will be extracted to
-standard out if --output was not specified.)
+standard out if \-\-output was not specified.)
 .TP
 .B \-l, \-\-list
 Output list of resources (default).
 .TP
 .B \-t, \-\-type=[+|\-]ID
-Resource type identifier of affected resources. If preceeded
-with a dash (``-''), id must be numeric; if preceeded with a
+Resource type identifier of affected resources. If preceded
+with a dash (``-''), id must be numeric; if preceded with a
 plus sign (``+''), id must be a string.
 
 The type ID may also be the name of a resource type. (If this is
@@ -57,7 +57,7 @@ list of resource types can be found in the ``Resource Types''
 section.
 .TP
 .B \-n, \-\-name=[+|\-]ID
-Resource name identifier of affected resources. Like the --type
+Resource name identifier of affected resources. Like the \-\-type
 option, a leading dash or plus sign controls the datatype of the
 id.
 .TP
@@ -77,12 +77,12 @@ last resource only.)
 .TP
 .B \-R, \-\-raw
 Do not parse resource contents - extract raw data. (This option
-will probably be replaced with --format=raw in future version of
+will probably be replaced with \-\-format=raw in future version of
 icoutils.)
 .TP
 .B \-v, \-\-verbose
 Explain what is being done. The verbose option may be specified
-more than once, like ``-vv'', to make wrestool even more
+more than once, like ``\-vv'', to make wrestool even more
 verbose.
 .TP
 .B \-\-help
@@ -171,21 +171,21 @@ cursor or icons, nor does icotool.
 .SH EXAMPLES
 List all resources in file `write.exe':
 .br
-  $ \fBwrestool -l write.exe\fP
-  --type=3 --name=1 --lang=1033 [type=icon offset=0x3120 size=752]
-  --type=3 --name=2 --lang=1033 [type=icon offset=0x3410 size=304]
-  --type=14 --name=1 --lang=1033 [type=group_icon offset=0x3540 size=34]
-  --type=16 --name=1 --lang=1033 [type=version offset=0x3564 size=808]
+  $ \fBwrestool \-l write.exe\fP
+  \-\-type=3 \-\-name=1 \-\-lang=1033 [type=icon offset=0x3120 size=752]
+  \-\-type=3 \-\-name=2 \-\-lang=1033 [type=icon offset=0x3410 size=304]
+  \-\-type=14 \-\-name=1 \-\-lang=1033 [type=group_icon offset=0x3540 size=34]
+  \-\-type=16 \-\-name=1 \-\-lang=1033 [type=version offset=0x3564 size=808]
 .PP
 List all (group-) icon resource in file `write.exe':
 .br
-  $ \fBwrestool -l --type=group_icon write.exe\fP
-  --type=14 --name=1 --lang=1033 [type=group_icon offset=0x3540 size=34]
+  $ \fBwrestool \-l \-\-type=group_icon write.exe\fP
+  \-\-type=14 \-\-name=1 \-\-lang=1033 [type=group_icon offset=0x3540 size=34]
 .PP
 Extract all icons to current directory, naming the destination files
 `write.exe_T_N.ico':
 .br
-  $ \fBwrestool -x --output=. -t14 write.exe\fP
+  $ \fBwrestool \-x \-\-output=. \-t14 write.exe\fP
   $ \fBls *.ico\fP
   write.exe_14_1.ico
 .SH SEE ALSO

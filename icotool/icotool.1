@@ -62,8 +62,8 @@ extracted.
 This options tells icotool that images in all given icon/cursor files
 are to be listed. The output will look something like this:
 
-  --icon --index=1 --width=16 --height=16 --bit-depth=4 --palette-size=16
-  --icon --index=2 --width=32 --height=32 --bit-depth=8 --palette-size=256
+  \-\-icon \-\-index=1 \-\-width=16 \-\-height=16 \-\-bit-depth=4 \-\-palette-size=16
+  \-\-icon \-\-index=2 \-\-width=32 \-\-height=32 \-\-bit-depth=8 \-\-palette-size=256
 .TP
 .B \-c, \-\-create
 This options tells icotool to create an icon/cursor file using all the
@@ -78,16 +78,17 @@ When listing or extracing files, this options tell icotool to list or
 extract only the N'th image in each file. The first image has index 1.
 
 This option has no effect in create mode.
+.TP
 .B \-w, \-\-width=\fIPIXELS\fR
-Similar to --index, but this option allows the image width to be matched
+Similar to \-\-index, but this option allows the image width to be matched
 instead. This option has no effect in create mode.
 .TP
 .B \-h, \-\-height=\fIPIXELS\fR
-Similar to --index, but this option allows the image height to be matched
+Similar to \-\-index, but this option allows the image height to be matched
 instead. This option has no effect in create mode.
 .TP
 .B \-b, \-\-bit-depth=\fICOUNT\fR
-Similar to --index, but this option allows the number of bits per pixel
+Similar to \-\-index, but this option allows the number of bits per pixel
 in the image to be matched instead. Valid values are 1, 2, 4, 8, 16, 24
 and 32.
 
@@ -103,7 +104,7 @@ for images in the icon file.
 .\".TP
 .TP
 .B \-p, \-\-palette-size=\fIPIXELS\fR
-Similar to --index, but this option allows the number of colors in
+Similar to \-\-index, but this option allows the number of colors in
 the image palette to be matched instead. Images with 24 or 32 bits
 in icon/cursor files do not have a palette, and will therefore have
 a palette size equal to 0.
@@ -111,13 +112,13 @@ a palette size equal to 0.
 This option has no effect in create mode.
 .TP
 .B \-X, \-\-hotspot-x=\fICOORD\fR
-Similar to --index, but this option allows the x-coordinate of the
+Similar to \-\-index, but this option allows the x-coordinate of the
 hotspot to be matched. This option only has effect on cursor files.
 
 In create mode, this can be used to specify the hotspot x-coordinate.
 .TP
 .B \-Y, \-\-hotspot-y=\fICOORD\fR
-Similar to --index, but this option allows the y-coordinate of the
+Similar to \-\-index, but this option allows the y-coordinate of the
 hotspot to be matched. This option only has effect on cursor files.
 
 In create mode, this can be used to specify the hotspot y-coordinate.
@@ -159,25 +160,25 @@ Output version information and exit.
 .SH EXAMPLES
 List all images in the file `demo.ico':
 .br
-  $ \fBicotool -l demo.ico\fP
-  --icon --index=1 --width=16 --height=16 --bit-depth=4 --palette-size=16
-  --icon --index=2 --width=32 --height=32 --bit-depth=4 --palette-size=16
-  --icon --index=3 --width=48 --height=48 --bit-depth=4 --palette-size=16
-  --icon --index=4 --width=16 --height=16 --bit-depth=8 --palette-size=256
-  --icon --index=5 --width=32 --height=32 --bit-depth=8 --palette-size=256
-  --icon --index=6 --width=48 --height=48 --bit-depth=8 --palette-size=256
+  $ \fBicotool \-l demo.ico\fP
+  \-\-icon \-\-index=1 \-\-width=16 \-\-height=16 \-\-bit-depth=4 \-\-palette-size=16
+  \-\-icon \-\-index=2 \-\-width=32 \-\-height=32 \-\-bit-depth=4 \-\-palette-size=16
+  \-\-icon \-\-index=3 \-\-width=48 \-\-height=48 \-\-bit-depth=4 \-\-palette-size=16
+  \-\-icon \-\-index=4 \-\-width=16 \-\-height=16 \-\-bit-depth=8 \-\-palette-size=256
+  \-\-icon \-\-index=5 \-\-width=32 \-\-height=32 \-\-bit-depth=8 \-\-palette-size=256
+  \-\-icon \-\-index=6 \-\-width=48 \-\-height=48 \-\-bit-depth=8 \-\-palette-size=256
 .PP
 List only 16-color images in `demo.ico':
 .br
-  $ \fBicotool -l --palette-size=16 demo.ico\fP
-  --icon --index=1 --width=16 --height=16 --bit-depth=4 --palette-size=16
-  --icon --index=2 --width=32 --height=32 --bit-depth=4 --palette-size=16
-  --icon --index=3 --width=48 --height=48 --bit-depth=4 --palette-size=16
+  $ \fBicotool \-l \-\-palette-size=16 demo.ico\fP
+  \-\-icon \-\-index=1 \-\-width=16 \-\-height=16 \-\-bit-depth=4 \-\-palette-size=16
+  \-\-icon \-\-index=2 \-\-width=32 \-\-height=32 \-\-bit-depth=4 \-\-palette-size=16
+  \-\-icon \-\-index=3 \-\-width=48 \-\-height=48 \-\-bit-depth=4 \-\-palette-size=16
 .PP
 Extract all images to current directory, naming the destination files
 `demo.ico_I_WxHxD.xpm':
 .br
-  $ \fBicotool -x -o . demo.ico\fP
+  $ \fBicotool \-x \-o . demo.ico\fP
   $ \fBls *.png\fP
   demo_1_16x16x4.png  demo_3_48x48x4.png  demo_5_32x32x8.png
   demo_2_32x32x4.png  demo_4_16x16x8.png  demo_6_48x48x8.png
@@ -185,11 +186,11 @@ Extract all images to current directory, naming the destination files
 Extract all 256-color icon images in all .ico files in the current
 directory, placing the extracted images in `img/'
 .br
-  $ \fBicotool -x -o img/ -p 256 *.ico\fP
+  $ \fBicotool \-x \-o img/ \-p 256 *.ico\fP
 .PP
 Create an icon named `favicon.ico' with two images:
 .br
-  $ \fBicotool -c -o favicon.ico mysite_32x32.png mysite_64x64.png\fP
+  $ \fBicotool \-c \-o favicon.ico mysite_32x32.png mysite_64x64.png\fP
 .SH AUTHOR
 The \fBicoutils\fP were written by Oskar Liljeblad <\fIoskar@osk.mine.nu\fP>.
 .SH COPYRIGHT
