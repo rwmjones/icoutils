@@ -8,10 +8,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: frank.richter@gmail.com\n"
-"POT-Creation-Date: 2010-02-13 18:44+0100\n"
+"POT-Creation-Date: 2012-08-23 17:35+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -253,11 +254,11 @@ msgstr ""
 msgid "not a png file"
 msgstr ""
 
-#: icotool/create.c:125 icotool/extract.c:273 icotool/extract.c:439
+#: icotool/create.c:125 icotool/extract.c:273 icotool/extract.c:449
 msgid "cannot initialize PNG library"
 msgstr ""
 
-#: icotool/create.c:130 icotool/extract.c:278 icotool/extract.c:444
+#: icotool/create.c:130 icotool/extract.c:278 icotool/extract.c:454
 msgid "cannot create PNG info structure - out of memory"
 msgstr ""
 
@@ -335,15 +336,15 @@ msgstr ""
 msgid "incorrect total size of bitmap (%d specified; %d real)"
 msgstr ""
 
-#: icotool/extract.c:382
+#: icotool/extract.c:392
 msgid "offset of bitmap header incorrect (too low)"
 msgstr ""
 
-#: icotool/extract.c:386
+#: icotool/extract.c:396
 msgid "invalid data at expected offset (unrecoverable)"
 msgstr ""
 
-#: icotool/extract.c:389
+#: icotool/extract.c:399
 #, c-format
 msgid "skipping %u bytes of garbage at %u"
 msgstr ""
