@@ -114,7 +114,7 @@ create_icon(int filec, char **filev, int raw_filec, char** raw_filev, CreateName
 		}
     	if (!xfread(header, 8, img[c].in))
 			goto cleanup;
-    	if (png_sig_cmp(header, 0, 8)) {
+    	if (png_sig_cmp((png_bytep)header, 0, 8)) {
 	    
         	warn(_("not a png file"));
 			goto cleanup;
