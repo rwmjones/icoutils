@@ -11,7 +11,6 @@ AM_MAINTAINER_MODE
 
 # Stuff for the config.h.in file
 AC_GNU_SOURCE
-AC_DEFINE_DIR(LOCALEDIR, datadir/locale, [Directory where gettext translations are kept.])
 #AH_TEMPLATE([PKGUSERDIR], [User directory for program files])
 
 # Checks for programs.

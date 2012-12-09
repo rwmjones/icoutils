@@ -1,5 +1,5 @@
-# memchr.m4 serial 7
-dnl Copyright (C) 2002, 2003, 2004, 2009 Free Software Foundation, Inc.
+# memchr.m4 serial 12
+dnl Copyright (C) 2002-2004, 2009-2012 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
@@ -11,15 +11,16 @@ AC_DEFUN_ONCE([gl_FUNC_MEMCHR],
   AC_CHECK_HEADERS_ONCE([sys/mman.h])
   AC_CHECK_FUNCS_ONCE([mprotect])
 
-  dnl These days, we assume memchr is present.  But just in case...
   AC_REQUIRE([gl_HEADER_STRING_H_DEFAULTS])
-  AC_REPLACE_FUNCS([memchr])
-  if test $ac_cv_func_memchr = no; then
-    gl_PREREQ_MEMCHR
-    REPLACE_MEMCHR=1
-  fi
-
-  if test $ac_cv_func_memchr = yes; then
+  m4_ifdef([gl_FUNC_MEMCHR_OBSOLETE], [
+    dnl These days, we assume memchr is present.  But if support for old
+    dnl platforms is desired:
+    AC_CHECK_FUNCS_ONCE([memchr])
+    if test $ac_cv_func_memchr = no; then
+      HAVE_MEMCHR=0
+    fi
+  ])
+  if test $HAVE_MEMCHR = 1; then
     # Detect platform-specific bugs in some versions of glibc:
     # memchr should not dereference anything with length 0
     #   http://bugzilla.redhat.com/499689
@@ -40,6 +41,7 @@ AC_DEFUN_ONCE([gl_FUNC_MEMCHR],
 # endif
 #endif
 ]], [[
+  int result = 0;
   char *fence = NULL;
 #if HAVE_SYS_MMAN_H && HAVE_MPROTECT
 # if HAVE_MAP_ANONYMOUS
@@ -53,29 +55,29 @@ AC_DEFUN_ONCE([gl_FUNC_MEMCHR],
     {
       int pagesize = getpagesize ();
       char *two_pages =
-	(char *) mmap (NULL, 2 * pagesize, PROT_READ | PROT_WRITE,
-		       flags, fd, 0);
+        (char *) mmap (NULL, 2 * pagesize, PROT_READ | PROT_WRITE,
+                       flags, fd, 0);
       if (two_pages != (char *)(-1)
-	  && mprotect (two_pages + pagesize, pagesize, PROT_NONE) == 0)
-	fence = two_pages + pagesize;
+          && mprotect (two_pages + pagesize, pagesize, PROT_NONE) == 0)
+        fence = two_pages + pagesize;
     }
 #endif
   if (fence)
     {
       if (memchr (fence, 0, 0))
-        return 1;
+        result |= 1;
       strcpy (fence - 9, "12345678");
       if (memchr (fence - 9, 0, 79) != fence - 1)
-        return 2;
+        result |= 2;
+      if (memchr (fence - 1, 0, 3) != fence - 1)
+        result |= 4;
     }
-  return 0;
+  return result;
 ]])], [gl_cv_func_memchr_works=yes], [gl_cv_func_memchr_works=no],
       [dnl Be pessimistic for now.
        gl_cv_func_memchr_works="guessing no"])])
     if test "$gl_cv_func_memchr_works" != yes; then
-      gl_PREREQ_MEMCHR
       REPLACE_MEMCHR=1
-      AC_LIBOBJ([memchr])
     fi
   fi
 ])
