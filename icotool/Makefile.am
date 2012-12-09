@@ -12,10 +12,10 @@ icotool_SOURCES = \
   win32.h
 
 icotool_LDADD = \
-  @INTLLIBS@ \
   @PNG_LIBS@ \
   ../common/libcommon.a \
-  ../lib/libgnu.a
+  ../lib/libgnu.a \
+  @INTLLIBS@
 
 man_MANS = \
   icotool.1
