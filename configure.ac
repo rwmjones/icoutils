@@ -61,7 +61,8 @@ AC_SUBST(PNG_LIBS, "-lpng -lz -lm")
     ], [-lz -lm])
   ], [-lz -lm])
 ], [-lz -lm])
-AC_CHECK_HEADERS([png.h libpng/png.h libpng10/png.h libpng12/png.h])
+AC_CHECK_HEADERS([png.h libpng/png.h libpng10/png.h libpng12/png.h
+		  locale.h])
 
 AC_CONFIG_FILES([Makefile
 		 icoutils.spec

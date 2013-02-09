@@ -23,6 +23,9 @@
 #include <getopt.h>		/* Gnulib/GNU Libc */
 #include <string.h>		/* C89 */
 #include <stdlib.h>		/* C89 */
+#ifdef HAVE_LOCALE_H
+# include <locale.h>		/* Solaris */
+#endif
 #include "gettext.h"
 #include "configmake.h"
 #define _(s) gettext(s)

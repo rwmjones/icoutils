@@ -17,6 +17,9 @@
  */
 
 #include <config.h>
+#ifdef HAVE_LOCALE_H
+# include <locale.h>			/* Solaris */
+#endif
 #include "gettext.h"			/* Gnulib */
 #include "configmake.h"
 #define _(s) gettext(s)
