@@ -15,12 +15,12 @@ AC_GNU_SOURCE
 
 # Checks for programs.
 AC_PROG_CC
+gl_EARLY
 AC_PROG_LN_S
-AM_PROG_AR
+m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
 # AC_PROG_LIBTOOL
 
 # Gnulib
-gl_EARLY
 gl_INIT
 
 # Gettext
