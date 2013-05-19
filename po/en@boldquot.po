@@ -30,10 +30,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: icoutils 0.30.0\n"
+"Project-Id-Version: icoutils 0.31.0\n"
 "Report-Msgid-Bugs-To: frank.richter@gmail.com\n"
-"POT-Creation-Date: 2013-05-19 14:12+0200\n"
-"PO-Revision-Date: 2013-05-19 14:12+0200\n"
+"POT-Creation-Date: 2013-05-19 14:20+0200\n"
+"PO-Revision-Date: 2013-05-19 14:20+0200\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
 "Language: en@boldquot\n"
