@@ -19,8 +19,6 @@ lib/gettimeofday.c
 lib/lstat.c
 lib/malloc.c
 lib/memchr.c
-lib/memmove.c
-lib/memset.c
 lib/minmax.h
 lib/printf-args.c
 lib/printf-args.h
