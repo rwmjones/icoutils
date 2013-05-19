@@ -239,7 +239,7 @@ main (int argc, char **argv)
 	    { "help",		no_argument,		NULL, OPT_HELP },
 	    { 0, 0, 0, 0 }
 	};
-	c = getopt_long (argc, argv, "t:n:L:o:aRrxlv", long_options, &option_index);
+	c = getopt_long (argc, argv, "t:n:L:o:aRxlv", long_options, &option_index);
 	if (c == EOF)
 	    break;
 
