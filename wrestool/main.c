@@ -189,7 +189,7 @@ display_help(void)
     printf(_("  -t, --type=[+|-]ID      resource type identifier\n"));
     printf(_("  -n, --name=[+|-]ID      resource name identifier\n"));
     printf(_("  -L, --language=[+|-]ID  resource language identifier\n"));
-    printf(_("      --all               perform operation on all resource (default)\n"));
+    printf(_("  -a, --all               perform operation on all resource (default)\n"));
     printf(_("\nMiscellaneous:\n"));
     printf(_("  -o, --output=PATH       where to place extracted files\n"));
     printf(_("  -R, --raw               do not parse resource contents\n"));
