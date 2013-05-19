@@ -1,7 +1,7 @@
 # English translations for icoutils package.
-# Copyright (C) 2012 Oskar Liljeblad
+# Copyright (C) 2013 Oskar Liljeblad
 # This file is distributed under the same license as the icoutils package.
-# Automatically generated, 2012.
+# Automatically generated, 2013.
 #
 # All this catalog "translates" are quotation characters.
 # The msgids must be ASCII and therefore cannot contain real quotation
@@ -30,83 +30,83 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: icoutils 0.29.0\n"
+"Project-Id-Version: icoutils 0.30.0\n"
 "Report-Msgid-Bugs-To: frank.richter@gmail.com\n"
-"POT-Creation-Date: 2012-08-23 17:35+0200\n"
-"PO-Revision-Date: 2012-08-23 17:35+0200\n"
+"POT-Creation-Date: 2013-05-19 14:12+0200\n"
+"PO-Revision-Date: 2013-05-19 14:12+0200\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
-"Language: en\n"
+"Language: en@boldquot\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: lib/error.c:127
+#: lib/error.c:188
 msgid "Unknown system error"
 msgstr "Unknown system error"
 
-#: lib/getopt.c:526 lib/getopt.c:542
+#: lib/getopt.c:547 lib/getopt.c:576
 #, c-format
-msgid "%s: option `%s' is ambiguous\n"
-msgstr "%s: option ‘[1m%s[0m’ is ambiguous\n"
+msgid "%s: option '%s' is ambiguous; possibilities:"
+msgstr "%s: option ‘[1m%s[0m’ is ambiguous; possibilities:"
 
-#: lib/getopt.c:575 lib/getopt.c:579
+#: lib/getopt.c:624 lib/getopt.c:628
 #, c-format
-msgid "%s: option `--%s' doesn't allow an argument\n"
+msgid "%s: option '--%s' doesn't allow an argument\n"
 msgstr "%s: option ‘[1m--%s[0m’ doesn't allow an argument\n"
 
-#: lib/getopt.c:588 lib/getopt.c:593
+#: lib/getopt.c:637 lib/getopt.c:642
 #, c-format
-msgid "%s: option `%c%s' doesn't allow an argument\n"
+msgid "%s: option '%c%s' doesn't allow an argument\n"
 msgstr "%s: option ‘[1m%c%s[0m’ doesn't allow an argument\n"
 
-#: lib/getopt.c:636 lib/getopt.c:655 lib/getopt.c:971 lib/getopt.c:990
+#: lib/getopt.c:685 lib/getopt.c:704
 #, c-format
-msgid "%s: option `%s' requires an argument\n"
-msgstr "%s: option ‘[1m%s[0m’ requires an argument\n"
+msgid "%s: option '--%s' requires an argument\n"
+msgstr "%s: option ‘[1m--%s[0m’ requires an argument\n"
 
-#: lib/getopt.c:693 lib/getopt.c:696
+#: lib/getopt.c:742 lib/getopt.c:745
 #, c-format
-msgid "%s: unrecognized option `--%s'\n"
+msgid "%s: unrecognized option '--%s'\n"
 msgstr "%s: unrecognized option ‘[1m--%s[0m’\n"
 
-#: lib/getopt.c:704 lib/getopt.c:707
+#: lib/getopt.c:753 lib/getopt.c:756
 #, c-format
-msgid "%s: unrecognized option `%c%s'\n"
+msgid "%s: unrecognized option '%c%s'\n"
 msgstr "%s: unrecognized option ‘[1m%c%s[0m’\n"
 
-#: lib/getopt.c:759 lib/getopt.c:762
+#: lib/getopt.c:805 lib/getopt.c:808
 #, c-format
-msgid "%s: illegal option -- %c\n"
-msgstr "%s: illegal option -- %c\n"
+msgid "%s: invalid option -- '%c'\n"
+msgstr "%s: invalid option -- ‘[1m%c[0m’\n"
 
-#: lib/getopt.c:768 lib/getopt.c:771
+#: lib/getopt.c:861 lib/getopt.c:878 lib/getopt.c:1088 lib/getopt.c:1106
 #, c-format
-msgid "%s: invalid option -- %c\n"
-msgstr "%s: invalid option -- %c\n"
+msgid "%s: option requires an argument -- '%c'\n"
+msgstr "%s: option requires an argument -- ‘[1m%c[0m’\n"
 
-#: lib/getopt.c:823 lib/getopt.c:839 lib/getopt.c:1043 lib/getopt.c:1061
+#: lib/getopt.c:934 lib/getopt.c:950
 #, c-format
-msgid "%s: option requires an argument -- %c\n"
-msgstr "%s: option requires an argument -- %c\n"
-
-#: lib/getopt.c:892 lib/getopt.c:908
-#, c-format
-msgid "%s: option `-W %s' is ambiguous\n"
+msgid "%s: option '-W %s' is ambiguous\n"
 msgstr "%s: option ‘[1m-W %s[0m’ is ambiguous\n"
 
-#: lib/getopt.c:932 lib/getopt.c:950
+#: lib/getopt.c:974 lib/getopt.c:992
 #, c-format
-msgid "%s: option `-W %s' doesn't allow an argument\n"
+msgid "%s: option '-W %s' doesn't allow an argument\n"
 msgstr "%s: option ‘[1m-W %s[0m’ doesn't allow an argument\n"
 
-#: lib/version-etc.c:68
+#: lib/getopt.c:1013 lib/getopt.c:1031
+#, c-format
+msgid "%s: option '-W %s' requires an argument\n"
+msgstr "%s: option ‘[1m-W %s[0m’ requires an argument\n"
+
+#: lib/version-etc.c:74
 #, c-format
 msgid "Packaged by %s (%s)\n"
 msgstr "Packaged by %s (%s)\n"
 
-#: lib/version-etc.c:71
+#: lib/version-etc.c:77
 #, c-format
 msgid "Packaged by %s\n"
 msgstr "Packaged by %s\n"
@@ -114,11 +114,11 @@ msgstr "Packaged by %s\n"
 #. TRANSLATORS: Translate "(C)" to the copyright symbol
 #. (C-in-a-circle), if this symbol is available in the user's
 #. locale.  Otherwise, do not translate "(C)"; leave it as-is.
-#: lib/version-etc.c:78
+#: lib/version-etc.c:84
 msgid "(C)"
 msgstr "(C)"
 
-#: lib/version-etc.c:80
+#: lib/version-etc.c:86
 msgid ""
 "\n"
 "License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl."
@@ -135,19 +135,19 @@ msgstr ""
 "\n"
 
 #. TRANSLATORS: %s denotes an author name.
-#: lib/version-etc.c:96
+#: lib/version-etc.c:102
 #, c-format
 msgid "Written by %s.\n"
 msgstr "Written by %s.\n"
 
 #. TRANSLATORS: Each %s denotes an author name.
-#: lib/version-etc.c:100
+#: lib/version-etc.c:106
 #, c-format
 msgid "Written by %s and %s.\n"
 msgstr "Written by %s and %s.\n"
 
 #. TRANSLATORS: Each %s denotes an author name.
-#: lib/version-etc.c:104
+#: lib/version-etc.c:110
 #, c-format
 msgid "Written by %s, %s, and %s.\n"
 msgstr "Written by %s, %s, and %s.\n"
@@ -155,7 +155,7 @@ msgstr "Written by %s, %s, and %s.\n"
 #. TRANSLATORS: Each %s denotes an author name.
 #. You can use line breaks, estimating that each author name occupies
 #. ca. 16 screen columns and that a screen line has ca. 80 columns.
-#: lib/version-etc.c:111
+#: lib/version-etc.c:117
 #, c-format
 msgid ""
 "Written by %s, %s, %s,\n"
@@ -167,7 +167,7 @@ msgstr ""
 #. TRANSLATORS: Each %s denotes an author name.
 #. You can use line breaks, estimating that each author name occupies
 #. ca. 16 screen columns and that a screen line has ca. 80 columns.
-#: lib/version-etc.c:118
+#: lib/version-etc.c:124
 #, c-format
 msgid ""
 "Written by %s, %s, %s,\n"
@@ -179,7 +179,7 @@ msgstr ""
 #. TRANSLATORS: Each %s denotes an author name.
 #. You can use line breaks, estimating that each author name occupies
 #. ca. 16 screen columns and that a screen line has ca. 80 columns.
-#: lib/version-etc.c:125
+#: lib/version-etc.c:131
 #, c-format
 msgid ""
 "Written by %s, %s, %s,\n"
@@ -191,7 +191,7 @@ msgstr ""
 #. TRANSLATORS: Each %s denotes an author name.
 #. You can use line breaks, estimating that each author name occupies
 #. ca. 16 screen columns and that a screen line has ca. 80 columns.
-#: lib/version-etc.c:133
+#: lib/version-etc.c:139
 #, c-format
 msgid ""
 "Written by %s, %s, %s,\n"
@@ -203,7 +203,7 @@ msgstr ""
 #. TRANSLATORS: Each %s denotes an author name.
 #. You can use line breaks, estimating that each author name occupies
 #. ca. 16 screen columns and that a screen line has ca. 80 columns.
-#: lib/version-etc.c:141
+#: lib/version-etc.c:147
 #, c-format
 msgid ""
 "Written by %s, %s, %s,\n"
@@ -217,7 +217,7 @@ msgstr ""
 #. TRANSLATORS: Each %s denotes an author name.
 #. You can use line breaks, estimating that each author name occupies
 #. ca. 16 screen columns and that a screen line has ca. 80 columns.
-#: lib/version-etc.c:150
+#: lib/version-etc.c:156
 #, c-format
 msgid ""
 "Written by %s, %s, %s,\n"
@@ -231,7 +231,7 @@ msgstr ""
 #. TRANSLATORS: Each %s denotes an author name.
 #. You can use line breaks, estimating that each author name occupies
 #. ca. 16 screen columns and that a screen line has ca. 80 columns.
-#: lib/version-etc.c:161
+#: lib/version-etc.c:167
 #, c-format
 msgid ""
 "Written by %s, %s, %s,\n"
@@ -246,28 +246,33 @@ msgstr ""
 #. for this package.  Please add _another line_ saying
 #. "Report translation bugs to <...>\n" with the address for translation
 #. bugs (typically your translation team's web or email address).
-#: lib/version-etc.c:239
+#: lib/version-etc.c:245
 #, c-format
 msgid ""
 "\n"
-"Report bugs to <%s>.\n"
+"Report bugs to: %s\n"
 msgstr ""
 "\n"
-"Report bugs to <%s>.\n"
+"Report bugs to: %s\n"
 
-#: lib/version-etc.c:241
+#: lib/version-etc.c:247
 #, c-format
-msgid "Report %s bugs to <%s>.\n"
-msgstr "Report %s bugs to <%s>.\n"
+msgid "Report %s bugs to: %s\n"
+msgstr "Report %s bugs to: %s\n"
 
-#: lib/version-etc.c:244
+#: lib/version-etc.c:251
 #, c-format
-msgid "%s home page: <http://www.gnu.org/software/%s/>.\n"
-msgstr "%s home page: <http://www.gnu.org/software/%s/>.\n"
+msgid "%s home page: <%s>\n"
+msgstr "%s home page: <%s>\n"
 
-#: lib/version-etc.c:246
-msgid "General help using GNU software: <http://www.gnu.org/gethelp/>.\n"
-msgstr "General help using GNU software: <http://www.gnu.org/gethelp/>.\n"
+#: lib/version-etc.c:253
+#, c-format
+msgid "%s home page: <http://www.gnu.org/software/%s/>\n"
+msgstr "%s home page: <http://www.gnu.org/software/%s/>\n"
+
+#: lib/version-etc.c:256
+msgid "General help using GNU software: <http://www.gnu.org/gethelp/>\n"
+msgstr "General help using GNU software: <http://www.gnu.org/gethelp/>\n"
 
 #: lib/xalloc-die.c:34
 msgid "memory exhausted"
@@ -406,25 +411,25 @@ msgstr "invalid data at expected offset (unrecoverable)"
 msgid "skipping %u bytes of garbage at %u"
 msgstr "skipping %u bytes of garbage at %u"
 
-#: icotool/main.c:121
+#: icotool/main.c:124
 msgid "refusing to write binary data to terminal"
 msgstr "refusing to write binary data to terminal"
 
-#: icotool/main.c:122 icotool/main.c:153
+#: icotool/main.c:125 icotool/main.c:156
 msgid "(standard out)"
 msgstr "(standard out)"
 
-#: icotool/main.c:164 wrestool/main.c:180
+#: icotool/main.c:167 wrestool/main.c:183
 #, c-format
 msgid "Usage: %s [OPTION]... [FILE]...\n"
 msgstr "Usage: %s [OPTION]... [FILE]...\n"
 
-#: icotool/main.c:165
+#: icotool/main.c:168
 #, c-format
 msgid "Convert and create Win32 icon (.ico) and cursor (.cur) files.\n"
 msgstr "Convert and create Win32 icon (.ico) and cursor (.cur) files.\n"
 
-#: icotool/main.c:166 wrestool/main.c:182
+#: icotool/main.c:169 wrestool/main.c:185
 #, c-format
 msgid ""
 "\n"
@@ -433,34 +438,34 @@ msgstr ""
 "\n"
 "Commands:\n"
 
-#: icotool/main.c:167
+#: icotool/main.c:170
 #, c-format
 msgid "  -x, --extract                extract images from files\n"
 msgstr "  -x, --extract                extract images from files\n"
 
-#: icotool/main.c:168
+#: icotool/main.c:171
 #, c-format
 msgid "  -l, --list                   print a list of images in files\n"
 msgstr "  -l, --list                   print a list of images in files\n"
 
-#: icotool/main.c:169
+#: icotool/main.c:172
 #, c-format
 msgid ""
 "  -c, --create                 create an icon file from specified files\n"
 msgstr ""
 "  -c, --create                 create an icon file from specified files\n"
 
-#: icotool/main.c:170
+#: icotool/main.c:173
 #, c-format
 msgid "      --help                   display this help and exit\n"
 msgstr "      --help                   display this help and exit\n"
 
-#: icotool/main.c:171
+#: icotool/main.c:174
 #, c-format
 msgid "      --version                output version information and exit\n"
 msgstr "      --version                output version information and exit\n"
 
-#: icotool/main.c:172
+#: icotool/main.c:175
 #, c-format
 msgid ""
 "\n"
@@ -469,57 +474,57 @@ msgstr ""
 "\n"
 "Options:\n"
 
-#: icotool/main.c:173
+#: icotool/main.c:176
 #, c-format
 msgid "  -i, --index=NUMBER           match index of image (first is 1)\n"
 msgstr "  -i, --index=NUMBER           match index of image (first is 1)\n"
 
-#: icotool/main.c:174
+#: icotool/main.c:177
 #, c-format
 msgid "  -w, --width=PIXELS           match width of image\n"
 msgstr "  -w, --width=PIXELS           match width of image\n"
 
-#: icotool/main.c:175
+#: icotool/main.c:178
 #, c-format
 msgid "  -h, --height=PIXELS          match height of image\n"
 msgstr "  -h, --height=PIXELS          match height of image\n"
 
-#: icotool/main.c:176
+#: icotool/main.c:179
 #, c-format
 msgid ""
 "  -p, --palette-size=COUNT     match number of colors in palette (or 0)\n"
 msgstr ""
 "  -p, --palette-size=COUNT     match number of colors in palette (or 0)\n"
 
-#: icotool/main.c:177
+#: icotool/main.c:180
 #, c-format
 msgid "  -b, --bit-depth=COUNT        match or set number of bits per pixel\n"
 msgstr "  -b, --bit-depth=COUNT        match or set number of bits per pixel\n"
 
-#: icotool/main.c:179
+#: icotool/main.c:182
 #, c-format
 msgid ""
 "  -X, --hotspot-x=COORD        match or set cursor hotspot x-coordinate\n"
 msgstr ""
 "  -X, --hotspot-x=COORD        match or set cursor hotspot x-coordinate\n"
-
-#: icotool/main.c:180
-#, c-format
-msgid ""
-"  -Y, --hotspot-y=COORD        match or set cursor hotspot y-coordinate\n"
-msgstr ""
-"  -Y, --hotspot-y=COORD        match or set cursor hotspot y-coordinate\n"
-
-#: icotool/main.c:181
-#, c-format
-msgid ""
-"  -t, --alpha-threshold=LEVEL  highest level in alpha channel indicating\n"
-"                               transparent image portions (default is 127)\n"
-msgstr ""
-"  -t, --alpha-threshold=LEVEL  highest level in alpha channel indicating\n"
-"                               transparent image portions (default is 127)\n"
 
 #: icotool/main.c:183
+#, c-format
+msgid ""
+"  -Y, --hotspot-y=COORD        match or set cursor hotspot y-coordinate\n"
+msgstr ""
+"  -Y, --hotspot-y=COORD        match or set cursor hotspot y-coordinate\n"
+
+#: icotool/main.c:184
+#, c-format
+msgid ""
+"  -t, --alpha-threshold=LEVEL  highest level in alpha channel indicating\n"
+"                               transparent image portions (default is 127)\n"
+msgstr ""
+"  -t, --alpha-threshold=LEVEL  highest level in alpha channel indicating\n"
+"                               transparent image portions (default is 127)\n"
+
+#: icotool/main.c:186
 #, c-format
 msgid ""
 "  -r, --raw=FILENAME           store input file as raw PNG (\"Vista icons"
@@ -528,107 +533,107 @@ msgstr ""
 "  -r, --raw=FILENAME           store input file as raw PNG (“[1mVista icons"
 "[0m”)\n"
 
-#: icotool/main.c:184
+#: icotool/main.c:187
 #, c-format
 msgid "      --icon                   match icons only\n"
 msgstr "      --icon                   match icons only\n"
 
-#: icotool/main.c:185
+#: icotool/main.c:188
 #, c-format
 msgid "      --cursor                 match cursors only\n"
 msgstr "      --cursor                 match cursors only\n"
 
-#: icotool/main.c:186
+#: icotool/main.c:189
 #, c-format
 msgid "  -o, --output=PATH            where to place extracted files\n"
 msgstr "  -o, --output=PATH            where to place extracted files\n"
 
-#: icotool/main.c:187
+#: icotool/main.c:190
 #, c-format
 msgid "\n"
 msgstr "\n"
 
-#: icotool/main.c:188
+#: icotool/main.c:191
 #, c-format
 msgid "Report bugs to <%s>.\n"
 msgstr "Report bugs to <%s>.\n"
 
-#: icotool/main.c:224 wrestool/main.c:213
+#: icotool/main.c:227 wrestool/main.c:216
 #, c-format
 msgid "%s: cannot set locale: %s"
 msgstr "%s: cannot set locale: %s"
 
-#: icotool/main.c:226 wrestool/main.c:215
+#: icotool/main.c:229 wrestool/main.c:218
 #, c-format
 msgid "%s: bindtextdomain failed: %s"
 msgstr "%s: bindtextdomain failed: %s"
 
-#: icotool/main.c:228 wrestool/main.c:217
+#: icotool/main.c:231 wrestool/main.c:220
 #, c-format
 msgid "%s: cannot set message domain: %s"
 msgstr "%s: cannot set message domain: %s"
 
-#: icotool/main.c:253
+#: icotool/main.c:256
 #, c-format
 msgid "invalid index value: %s"
 msgstr "invalid index value: %s"
 
-#: icotool/main.c:257
+#: icotool/main.c:260
 #, c-format
 msgid "invalid width value: %s"
 msgstr "invalid width value: %s"
 
-#: icotool/main.c:261
+#: icotool/main.c:264
 #, c-format
 msgid "invalid height value: %s"
 msgstr "invalid height value: %s"
 
-#: icotool/main.c:265
+#: icotool/main.c:268
 #, c-format
 msgid "invalid palette-size value: %s"
 msgstr "invalid palette-size value: %s"
 
-#: icotool/main.c:269
+#: icotool/main.c:272
 #, c-format
 msgid "invalid bit-depth value: %s"
 msgstr "invalid bit-depth value: %s"
 
-#: icotool/main.c:277
+#: icotool/main.c:280
 #, c-format
 msgid "invalid hotspot-x value: %s"
 msgstr "invalid hotspot-x value: %s"
 
-#: icotool/main.c:282
+#: icotool/main.c:285
 #, c-format
 msgid "invalid hotspot-y value: %s"
 msgstr "invalid hotspot-y value: %s"
 
-#: icotool/main.c:287
+#: icotool/main.c:290
 #, c-format
 msgid "invalid alpha-threshold value: %s"
 msgstr "invalid alpha-threshold value: %s"
 
-#: icotool/main.c:306
+#: icotool/main.c:309
 msgid "multiple commands specified"
 msgstr "multiple commands specified"
 
-#: icotool/main.c:308
+#: icotool/main.c:311
 msgid "missing argument"
 msgstr "missing argument"
 
-#: icotool/main.c:313
+#: icotool/main.c:316
 msgid "only one of --icon and --cursor may be specified"
 msgstr "only one of --icon and --cursor may be specified"
 
-#: icotool/main.c:317
+#: icotool/main.c:320
 msgid "missing file argument"
 msgstr "missing file argument"
 
-#: icotool/main.c:330 icotool/main.c:349
+#: icotool/main.c:333 icotool/main.c:352
 msgid "missing arguments"
 msgstr "missing arguments"
 
-#: icotool/main.c:340
+#: icotool/main.c:343
 #, c-format
 msgid "%s: no images matched\n"
 msgstr "%s: no images matched\n"
@@ -658,22 +663,22 @@ msgstr "%s: mismatch of size in icon resource ‘[1m%s[0m’ and group (%d vs 
 msgid "%s: premature end"
 msgstr "%s: premature end"
 
-#: wrestool/main.c:181
+#: wrestool/main.c:184
 #, c-format
 msgid "Extract resources from Microsoft Windows(R) binaries.\n"
 msgstr "Extract resources from Microsoft Windows(R) binaries.\n"
 
-#: wrestool/main.c:183
+#: wrestool/main.c:186
 #, c-format
 msgid "  -x, --extract           extract resources\n"
 msgstr "  -x, --extract           extract resources\n"
 
-#: wrestool/main.c:184
+#: wrestool/main.c:187
 #, c-format
 msgid "  -l, --list              output list of resources (default)\n"
 msgstr "  -l, --list              output list of resources (default)\n"
 
-#: wrestool/main.c:185
+#: wrestool/main.c:188
 #, c-format
 msgid ""
 "\n"
@@ -682,28 +687,28 @@ msgstr ""
 "\n"
 "Filters:\n"
 
-#: wrestool/main.c:186
+#: wrestool/main.c:189
 #, c-format
 msgid "  -t, --type=[+|-]ID      resource type identifier\n"
 msgstr "  -t, --type=[+|-]ID      resource type identifier\n"
 
-#: wrestool/main.c:187
+#: wrestool/main.c:190
 #, c-format
 msgid "  -n, --name=[+|-]ID      resource name identifier\n"
 msgstr "  -n, --name=[+|-]ID      resource name identifier\n"
 
-#: wrestool/main.c:188
+#: wrestool/main.c:191
 #, c-format
 msgid "  -L, --language=[+|-]ID  resource language identifier\n"
 msgstr "  -L, --language=[+|-]ID  resource language identifier\n"
 
-#: wrestool/main.c:189
+#: wrestool/main.c:192
 #, c-format
-msgid "      --all               perform operation on all resource (default)\n"
+msgid "  -a, --all               perform operation on all resource (default)\n"
 msgstr ""
-"      --all               perform operation on all resource (default)\n"
+"  -a, --all               perform operation on all resource (default)\n"
 
-#: wrestool/main.c:190
+#: wrestool/main.c:193
 #, c-format
 msgid ""
 "\n"
@@ -712,32 +717,32 @@ msgstr ""
 "\n"
 "Miscellaneous:\n"
 
-#: wrestool/main.c:191
+#: wrestool/main.c:194
 #, c-format
 msgid "  -o, --output=PATH       where to place extracted files\n"
 msgstr "  -o, --output=PATH       where to place extracted files\n"
 
-#: wrestool/main.c:192
+#: wrestool/main.c:195
 #, c-format
 msgid "  -R, --raw               do not parse resource contents\n"
 msgstr "  -R, --raw               do not parse resource contents\n"
 
-#: wrestool/main.c:193
+#: wrestool/main.c:196
 #, c-format
 msgid "  -v, --verbose           explain what is being done\n"
 msgstr "  -v, --verbose           explain what is being done\n"
 
-#: wrestool/main.c:194
+#: wrestool/main.c:197
 #, c-format
 msgid "      --help              display this help and exit\n"
 msgstr "      --help              display this help and exit\n"
 
-#: wrestool/main.c:195
+#: wrestool/main.c:198
 #, c-format
 msgid "      --version           output version information and exit\n"
 msgstr "      --version           output version information and exit\n"
 
-#: wrestool/main.c:196
+#: wrestool/main.c:199
 #, c-format
 msgid ""
 "\n"
@@ -751,20 +756,20 @@ msgstr ""
 "identifier. Similarly, ‘[1m-[0m’ indicates a true numeric identifier.\n"
 "\n"
 
-#: wrestool/main.c:198
+#: wrestool/main.c:201
 #, c-format
 msgid "Report bugs to %s.\n"
 msgstr "Report bugs to %s.\n"
 
-#: wrestool/main.c:270
+#: wrestool/main.c:273
 msgid "--language has no effect without --name and --type"
 msgstr "--language has no effect without --name and --type"
 
-#: wrestool/main.c:272
+#: wrestool/main.c:275
 msgid "--name has no effect without --type"
 msgstr "--name has no effect without --type"
 
-#: wrestool/main.c:280
+#: wrestool/main.c:283
 #, c-format
 msgid ""
 "missing file argument\n"
@@ -773,12 +778,12 @@ msgstr ""
 "missing file argument\n"
 "Try ‘[1m%s --help[0m’ for more information."
 
-#: wrestool/main.c:300
+#: wrestool/main.c:303
 #, c-format
 msgid "%s: file has a size of 0"
 msgstr "%s: file has a size of 0"
 
-#: wrestool/main.c:329
+#: wrestool/main.c:332
 #, c-format
 msgid "%s: --language has no effect because file is 16-bit binary"
 msgstr "%s: --language has no effect because file is 16-bit binary"
