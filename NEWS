@@ -1,6 +1,8 @@
-????-??-??: icoutils 0.31.1 released.
+????-??-??: icoutils 0.31.0 released.
   Change placement of libintl dependency.
    Fixes build issues with external libintl (e.g. MinGW). (Sebastián Puebla)
+  Solaris build fixes. (Mats Erik Andersson)
+  Man page improvements. (Richard W.M. Jones)
 
 2012-08-23: icoutils 0.30.0 released.
   Fix crash with libpng version prior to 1.2.25. (Martin Storsjö)
