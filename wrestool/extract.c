@@ -237,13 +237,15 @@ extract_group_icon_cursor_resource(WinLibrary *fi, WinResource *wr, char *lang,
 		fileicondir->entries[c-skipped].dib_offset = offset;
 
 		/* transfer resource into file memory */
+		if (size > icondir->entries[c].bytes_in_res)
+			size = icondir->entries[c].bytes_in_res;
 		if (is_icon) {
-			memcpy(&memory[offset], data, icondir->entries[c].bytes_in_res);
+			memcpy(&memory[offset], data, size);
 		} else {
 			fileicondir->entries[c-skipped].hotspot_x = ((uint16_t *) data)[0];
 			fileicondir->entries[c-skipped].hotspot_y = ((uint16_t *) data)[1];
 			memcpy(&memory[offset], data+sizeof(uint16_t)*2,
-				   icondir->entries[c].bytes_in_res-sizeof(uint16_t)*2);
+				   size-sizeof(uint16_t)*2);
 			offset -= sizeof(uint16_t)*2;
 		}
 
