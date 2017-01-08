@@ -1,14 +1,14 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Oskar Liljeblad
-# This file is distributed under the same license as the PACKAGE package.
+# This file is distributed under the same license as the icoutils package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: icoutils 0.31.0\n"
+"Project-Id-Version: icoutils 0.31.1\n"
 "Report-Msgid-Bugs-To: frank.richter@gmail.com\n"
-"POT-Creation-Date: 2013-05-19 14:20+0200\n"
+"POT-Creation-Date: 2017-01-08 15:40+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -589,7 +589,7 @@ msgstr ""
 msgid "%s: mismatch of size in icon resource `%s' and group (%d vs %d)"
 msgstr ""
 
-#: wrestool/fileread.c:44
+#: wrestool/fileread.c:47
 #, c-format
 msgid "%s: premature end"
 msgstr ""
