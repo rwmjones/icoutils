@@ -1,5 +1,7 @@
 2???-??-??: icoutils released.
-  Security fix (Colin Watson, Debian bug #850017)
+  Security fixes:
+    Colin Watson, Debian bug #850017
+    Martin Gieseking, Fedora bug #1249276
 
 2013-05-19: icoutils 0.31.0 released.
   Change placement of libintl dependency.
