@@ -1,3 +1,6 @@
+2???-??-??: icoutils released.
+  Security fix (Colin Watson, Debian bug #850017)
+
 2013-05-19: icoutils 0.31.0 released.
   Change placement of libintl dependency.
    Fixes build issues with external libintl (e.g. MinGW). (Sebastián Puebla)
