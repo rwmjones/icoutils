@@ -399,6 +399,7 @@ read_library (WinLibrary *fi)
 		/* falls through */
 	}
 
+	RETURN_IF_BAD_OFFSET(false, MZ_HEADER(fi->memory), sizeof(Win32ImageNTHeaders));
 	/* check for OS2 (Win16) header signature `NE' */
 	RETURN_IF_BAD_POINTER(false, NE_HEADER(fi->memory)->magic);
 	if (NE_HEADER(fi->memory)->magic == IMAGE_OS2_SIGNATURE) {
