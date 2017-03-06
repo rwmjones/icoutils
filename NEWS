@@ -1,3 +1,8 @@
+2017-03-06: icoutils 0.31.2 released.
+  Various security fixes from Martin Gieseking,
+  issues found by Jerzy Kramarz
+  (CVE-2017-6009, CVE-2017-6010, CVE-2017-6011).
+
 2017-01-08: icoutils 0.31.1 released.
   Security fixes:
     Colin Watson, Debian bug #850017

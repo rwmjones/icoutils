@@ -20,8 +20,11 @@ Sean Peirce <seanp71@bellatlantic.net>
 Marcin Siennicki
  - BMP extraction support for wrestool
 
+Martin Gieseking <martin.gieseking@uos.de>
+ - Security fixes
+ - Miscellaneous fixes and improvements
+
 Joel Holdsworth<joel@airwebreathe.org.uk>
-Martin Gieseking
 Martin Storsjö<martin@martin.st>
 Mathew Eis <mathew.eis@gmail.com>
 Sebastián Puebla <spuebla@hotmail.com>
@@ -33,3 +36,7 @@ Mats Erik Andersson <gnu@gisladisker.se>
 Markus Schölzel <m-schoelzel@web.de>
 Richard W.M. Jones <rjones@redhat.com>
  - man page improvements
+
+Jerzy Kramarz <op7ica@gmail.com>
+ - pointing out various crashes/bugs exploitable for DoS
+   purposes
