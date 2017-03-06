@@ -223,7 +223,7 @@ decode_ne_resource_id (WinLibrary *fi, WinResource *wr, uint16_t value)
 		/* translate id into a string */
 		snprintf(wr->id, WINRES_ID_MAXLEN, "%d", value & ~NE_RESOURCE_NAME_IS_NUMERIC);
 	} else {					/* ASCII string id */
-		int len;
+		unsigned char len;
 		char *mem = (char *) NE_HEADER(fi->memory)
 		                     + NE_HEADER(fi->memory)->rsrctab
 		                     + value;
