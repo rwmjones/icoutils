@@ -138,7 +138,8 @@ extract_icons(FILE *in, char *inname, bool listmode, ExtractNameGen outfile_gen,
 				Win32RGBQuad *palette = NULL;
 				uint32_t palette_count = 0;
 				uint32_t image_size, mask_size;
-				uint32_t width, height, bit_count;
+				int32_t width, height;
+				uint32_t bit_count;
 				uint8_t *image_data = NULL, *mask_data = NULL;
 				png_structp png_ptr = NULL;
 				png_infop info_ptr = NULL;
@@ -154,16 +155,19 @@ extract_icons(FILE *in, char *inname, bool listmode, ExtractNameGen outfile_gen,
 				/* Vista icon: it's just a raw PNG */
 				if (bitmap.size == ICO_PNG_MAGIC)
 				{
+					uint32_t unsigned_width, unsigned_height;
 					fseek(in, offset, SEEK_SET);
 				
 					image_size = entries[c].dib_size;
 					image_data = xmalloc(image_size);
 					if (!xfread(image_data, image_size, in))
 						goto done;
-					
-					if (!read_png (image_data, image_size, &bit_count, &width, &height))
+
+					if (!read_png (image_data, image_size, &bit_count, &unsigned_width, &unsigned_height))
 						goto done;
-					
+
+					width = (int32_t)unsigned_width;
+					height = (int32_t)unsigned_height;
 					completed++;
 					
 					if (!filter(completed, width, height, bitmap.bit_count, palette_count, dir.type == 1,
