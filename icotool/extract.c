@@ -168,6 +168,10 @@ extract_icons(FILE *in, char *inname, bool listmode, ExtractNameGen outfile_gen,
 
 					width = (int32_t)unsigned_width;
 					height = (int32_t)unsigned_height;
+					if ((bitmap.width > INT32_MAX/4) || (bitmap.height > INT32_MAX)) {
+						warn(_("PNG too large"));
+						goto done;
+					}
 					completed++;
 					
 					if (!filter(completed, width, height, bitmap.bit_count, palette_count, dir.type == 1,
