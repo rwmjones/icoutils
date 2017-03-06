@@ -419,7 +419,7 @@ read_library (WinLibrary *fi)
 
 		/* allocate new memory */
 		fi->total_size = calc_vma_size(fi);
-		if (fi->total_size == 0) {
+		if (fi->total_size <= 0) {
 			/* calc_vma_size has reported error */
 			return false;
 		}
