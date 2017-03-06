@@ -41,6 +41,13 @@ static WinResource *find_with_resource_array(WinLibrary *, WinResource *, char *
 static WinResource *list_resources (WinLibrary *fi, WinResource *res, int *count);
 static bool compare_resource_id (WinResource *wr, char *id);
 
+/* Check whether access to a PE_SECTIONS is allowed */
+#define RETURN_IF_BAD_PE_SECTIONS(ret, module)                                              \
+    do {                                                                                    \
+        RETURN_IF_BAD_POINTER(ret, PE_HEADER(module)->optional_header);                     \
+        RETURN_IF_BAD_POINTER(ret, PE_HEADER(module)->file_header.size_of_optional_header); \
+    } while(0)
+
 /* do_resources:
  *   Do something for each resource matching type, name and lang.
  */
@@ -427,7 +434,8 @@ read_library (WinLibrary *fi)
 
 		/* relocate memory, start from last section */
 		pe_header = PE_HEADER(fi->memory);
-		RETURN_IF_BAD_POINTER(false, pe_header->file_header.number_of_sections);
+        RETURN_IF_BAD_POINTER(false, pe_header->file_header.number_of_sections);
+        RETURN_IF_BAD_PE_SECTIONS(false, fi->memory);
 
 		/* we don't need to do OFFSET checking for the sections.
 		 * calc_vma_size has already done that */
@@ -487,6 +495,7 @@ calc_vma_size (WinLibrary *fi)
     if (segcount == 0)
     	return fi->total_size;
 
+    RETURN_IF_BAD_PE_SECTIONS(-1, fi->memory);
     seg = PE_SECTIONS(fi->memory);
     RETURN_IF_BAD_POINTER(-1, *seg);
     
