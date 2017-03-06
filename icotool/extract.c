@@ -234,6 +234,10 @@ extract_icons(FILE *in, char *inname, bool listmode, ExtractNameGen outfile_gen,
 							goto done;
 						offset += sizeof(Win32RGBQuad) * palette_count;
 					}
+					if (abs(bitmap.width) > INT32_MAX/max(4, bitmap.bit_count)) {
+						warn(_("bitmap width too large"));
+						goto done;
+					}
 
 					width = bitmap.width;
 					height = abs(bitmap.height)/2;
