@@ -237,6 +237,10 @@ extract_icons(FILE *in, char *inname, bool listmode, ExtractNameGen outfile_gen,
 
 					if (bitmap.clr_used != 0 || bitmap.bit_count < 24) {
 						palette_count = (bitmap.clr_used != 0 ? bitmap.clr_used : 1 << bitmap.bit_count);
+						if (palette_count > 256) {
+							warn(_("palette too large"));
+							goto done;
+						}
 						palette = xmalloc(sizeof(Win32RGBQuad) * palette_count);
 						if (!xfread(palette, sizeof(Win32RGBQuad) * palette_count, in))
 							goto done;
