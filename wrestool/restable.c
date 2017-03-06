@@ -87,9 +87,13 @@ do_resources_recurs (WinLibrary *fi, WinResource *base, WinResource *type_wr,
 	wr = list_resources (fi, base, &rescnt);
 	if (wr == NULL)
 		return;
+	if (!check_offset(fi->memory, fi->total_size, fi->name, &wr[0], sizeof(WinResource)))
+		return;
 
 	/* process each resource listed */
 	for (c = 0 ; c < rescnt ; c++) {
+		if (!check_offset(fi->memory, fi->total_size, fi->name, &wr[c], sizeof(WinResource)))
+			break;
 		/* (over)write the corresponding WinResource holder with the current */
 		memcpy(WINRESOURCE_BY_LEVEL(wr[c].level), wr+c, sizeof(WinResource));
 
