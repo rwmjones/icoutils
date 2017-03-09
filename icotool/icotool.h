@@ -36,9 +36,9 @@ uint32_t palette_lookup(Palette *palette, uint8_t r, uint8_t g, uint8_t b);
 uint32_t palette_count(Palette *palette);
 
 /* extract.c */
-typedef FILE *(*ExtractNameGen)(char **outname, int width, int height, int bitcount, int index);
+typedef FILE *(*ExtractNameGen)(const char *inname, char **outname, int width, int height, int bitcount, int index);
 typedef bool (*ExtractFilter)(int index, int width, int height, int bitdepth, int palettesize, bool icon, int hotspot_x, int hotspot_y);
-int extract_icons(FILE *in, char *inname, bool listmode, ExtractNameGen outfile_gen, ExtractFilter filter);
+int extract_icons(FILE *in, const char *inname, bool listmode, ExtractNameGen outfile_gen, ExtractFilter filter);
 
 /* create.c */
 typedef FILE *(*CreateNameGen)(char **outname);

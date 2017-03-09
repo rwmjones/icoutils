@@ -95,7 +95,7 @@ static void png_read_mem (png_structp png, png_bytep data, png_size_t size)
 
 
 int
-extract_icons(FILE *in, char *inname, bool listmode, ExtractNameGen outfile_gen, ExtractFilter filter)
+extract_icons(FILE *in, const char *inname, bool listmode, ExtractNameGen outfile_gen, ExtractFilter filter)
 {
 	Win32CursorIconFileDir dir;
 	Win32CursorIconFileDirEntry *entries = NULL;
@@ -191,8 +191,7 @@ extract_icons(FILE *in, char *inname, bool listmode, ExtractNameGen outfile_gen,
 							printf(_(" --hotspot-x=%d --hotspot-y=%d"), entries[c].hotspot_x, entries[c].hotspot_y);
 						printf("\n");
 					} else {
-						outname = inname;
-						out = outfile_gen(&outname, width, height, bit_count, completed);
+						out = outfile_gen(inname, &outname, width, height, bit_count, completed);
 						restore_message_header();
 						set_message_header(outname);
 
@@ -296,8 +295,7 @@ extract_icons(FILE *in, char *inname, bool listmode, ExtractNameGen outfile_gen,
 							goto done;
 						}
 
-						outname = inname;
-						out = outfile_gen(&outname, width, height, bitmap.bit_count, completed);
+						out = outfile_gen(inname, &outname, width, height, bitmap.bit_count, completed);
 						restore_message_header();
 						set_message_header(outname);
 
