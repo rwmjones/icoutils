@@ -281,7 +281,7 @@ llist_get(LList *list, uint32_t index)
 {
 	LNode *entry;
 
-	if (index < 0 || index >= list->size)
+	if (index >= list->size)
 		return NULL;
 
 	entry = llist_get_entry(list, index);
@@ -294,7 +294,7 @@ llist_set(LList *list, uint32_t index, void *data)
 	LNode *entry;
 	void *old_data;
 
-	if (index < 0 || index >= list->size)
+	if (index >= list->size)
 		return NULL;
 
 	entry = llist_get_entry(list, index);
@@ -316,7 +316,7 @@ llist_add_at(LList *list, uint32_t index, void *data)
 {
 	LNode *entry;
 	
-	if (index < 0 || index > list->size)
+	if (index > list->size)
 		return;
 
 	entry = xmalloc(sizeof(LNode));
@@ -343,7 +343,7 @@ llist_remove_at(LList *list, uint32_t index)
 	LNode *entry;
 	void *data;
 
-	if (index < 0 || index >= list->size)
+	if (index >= list->size)
 		return NULL;
 
 	entry = llist_get_entry(list, index);
