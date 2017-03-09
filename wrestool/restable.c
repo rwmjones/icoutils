@@ -488,7 +488,7 @@ static int
 calc_vma_size (WinLibrary *fi)
 {
     Win32ImageSectionHeader *seg;
-    int c, segcount, size;
+    size_t c, segcount, size;
 
     size = 0;
     RETURN_IF_BAD_POINTER(-1, PE_HEADER(fi->memory)->file_header.number_of_sections);
