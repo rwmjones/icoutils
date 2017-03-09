@@ -117,7 +117,8 @@ print_resources_callback (WinLibrary *fi, WinResource *wr,
 						  WinResource *lang_wr)
 {
 	char *type, *offset;
-	int32_t id, size;
+	int32_t id;
+	size_t size;
 
 	/* get named resource type if possible */
 	type = NULL;
@@ -129,7 +130,7 @@ print_resources_callback (WinLibrary *fi, WinResource *wr,
 	if (offset == NULL)
 		return;
 
-	printf(_("--type=%s --name=%s%s%s [%s%s%soffset=0x%x size=%d]\n"),
+	printf(_("--type=%s --name=%s%s%s [%s%s%soffset=0x%x size=%zu]\n"),
 	  get_resource_id_quoted(type_wr),
 	  get_resource_id_quoted(name_wr),
 	  (lang_wr->id[0] != '\0' ? _(" --language=") : ""),
@@ -203,7 +204,7 @@ decode_pe_resource_id (WinLibrary *fi, WinResource *wr, uint32_t value)
 }
  
 void *
-get_resource_entry (WinLibrary *fi, WinResource *wr, int *size)
+get_resource_entry (WinLibrary *fi, WinResource *wr, size_t *size)
 {
 	if (fi->is_PE_binary) {
 		Win32ImageResourceDataEntry *dataent;
