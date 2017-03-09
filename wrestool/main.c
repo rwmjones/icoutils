@@ -62,7 +62,7 @@ static char *res_types[] = {
     "version", "dlginclude", NULL, "plugplay", "vxd",
     "anicursor", "aniicon"
 };
-#define RES_TYPE_COUNT (sizeof(res_types)/sizeof(char *))
+#define RES_TYPE_COUNT ((int)(sizeof(res_types)/sizeof(char *)))
 
 static char *res_type_string_to_id (char *);
 static char *get_extract_extension (char *);
