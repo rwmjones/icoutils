@@ -19,14 +19,16 @@
 #ifndef COMMON_COMMON_H
 #define COMMON_COMMON_H
 
-#define SWAP(a,b)	({ typeof(a) t = a; a = b; b = t; })
+#define SWAP(a,b)	({ typeof(a) _t = (a); a = (b); (b) = _t; })
 
+/* Variant of MIN which evaluates each parameter only once. */
 #ifndef min
-#define min(a,b)	({ typeof(a) c = a; typeof(b) d = b; MIN(c,d); })
+#define min(a,b)	({ typeof(a) _c = (a); typeof(b) _d = (b); MIN(_c,_d); })
 #endif
 
+/* Variant of MAX which evaluates each parameter only once. */
 #ifndef max
-#define max(a,b)	({ typeof(a) c = a; typeof(b) d = b; MAX(c,d); })
+#define max(a,b)	({ typeof(a) _c = (a); typeof(b) _d = (b); MAX(_c,_d); })
 #endif
 
 #define RETURN_IF_DIFFERENT(i1,i2) \
