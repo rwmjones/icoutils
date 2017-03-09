@@ -243,7 +243,7 @@ main (int argc, char **argv)
 	if (c == EOF)
 	    break;
 
-	    switch (c) {
+	switch (c) {
 	    case 't': arg_type = optarg; break;
 	    case 'n': arg_name = optarg; break;
 	    case 'L': arg_language = optarg; break;
