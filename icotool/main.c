@@ -217,7 +217,7 @@ main(int argc, char **argv)
     bool create_mode = false;
     FILE *in;
     char *inname;
-    int raw_filec = 0;
+    size_t raw_filec = 0;
     char** raw_filev = 0;
 
     set_program_name(argv[0]);

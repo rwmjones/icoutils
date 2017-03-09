@@ -66,7 +66,7 @@ xfread(void *ptr, size_t size, FILE *stream)
 }
 
 bool
-create_icon(int filec, char **filev, int raw_filec, char** raw_filev, CreateNameGen outfile_gen, bool icon_mode, int32_t hotspot_x, int32_t hotspot_y, int32_t alpha_threshold, int32_t bit_count)
+create_icon(size_t filec, char **filev, size_t raw_filec, char** raw_filev, CreateNameGen outfile_gen, bool icon_mode, int32_t hotspot_x, int32_t hotspot_y, int32_t alpha_threshold, int32_t bit_count)
 {
 	struct {
 		FILE *in;
@@ -87,10 +87,11 @@ create_icon(int filec, char **filev, int raw_filec, char** raw_filev, CreateName
 	Win32CursorIconFileDir dir;
 	FILE *out;
 	char *outname = NULL;
-	uint32_t c, d, x;
+	size_t c;
+	uint32_t d, x;
 	uint32_t dib_start;
 	png_byte ct;
-	int org_filec = filec;
+	size_t org_filec = filec;
 	
 	filec += raw_filec;
 
