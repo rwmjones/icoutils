@@ -91,7 +91,7 @@ typedef void (*DoResourceCallback) (WinLibrary *, WinResource *, WinResource *, 
 /* resource.c */
 /* WinResource *list_resources (WinLibrary *, WinResource *, int *); */
 bool read_library (WinLibrary *);
-WinResource *find_resource (WinLibrary *, char *, char *, char *, int *);
+WinResource *find_resource (WinLibrary *, const char *, const char *, const char *, int *);
 void *get_resource_entry (WinLibrary *, WinResource *, int *);
 void do_resources (WinLibrary *, char *, char *, char *, DoResourceCallback);
 void print_resources_callback (WinLibrary *, WinResource *, WinResource *, WinResource *, WinResource *);

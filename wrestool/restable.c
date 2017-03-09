@@ -542,7 +542,7 @@ find_with_resource_array(WinLibrary *fi, WinResource *wr, char *id)
 }
 
 WinResource *
-find_resource (WinLibrary *fi, char *type, char *name, char *language, int *level)
+find_resource (WinLibrary *fi, const char *type, const char *name, const char *language, int *level)
 {
 	WinResource *wr;
 
