@@ -93,13 +93,13 @@ typedef void (*DoResourceCallback) (WinLibrary *, WinResource *, WinResource *, 
 bool read_library (WinLibrary *);
 WinResource *find_resource (WinLibrary *, const char *, const char *, const char *, int *);
 void *get_resource_entry (WinLibrary *, WinResource *, size_t *);
-void do_resources (WinLibrary *, char *, char *, char *, DoResourceCallback);
+void do_resources (WinLibrary *, const char *, const char *, const char *, DoResourceCallback);
 void print_resources_callback (WinLibrary *, WinResource *, WinResource *, WinResource *, WinResource *);
 /* bool compare_resource_id (WinResource *, char *); */
 
 /* main.c */
-char *res_type_id_to_string (int);
-char *get_destination_name (WinLibrary *, char *, char *, char *);
+const char *res_type_id_to_string (int);
+const char *get_destination_name (WinLibrary *, const char *, const char *, const char *);
 
 /* extract.c */
 void *extract_resource (WinLibrary *, WinResource *, size_t *, bool *, char *, char *, bool);

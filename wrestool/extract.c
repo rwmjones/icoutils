@@ -39,7 +39,7 @@ extract_resources_callback (WinLibrary *fi, WinResource *wr,
 	size_t size;
 	bool free_it;
 	void *memory;
-	char *outname;
+	const char *outname;
 	FILE *out;
 
 	memory = extract_resource(fi, wr, &size, &free_it, type_wr->id, (lang_wr == NULL ? NULL : lang_wr->id), arg_raw);

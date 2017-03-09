@@ -35,11 +35,11 @@ static WinResource *list_ne_type_resources (WinLibrary *, int *);
 static WinResource *list_ne_name_resources (WinLibrary *, WinResource *, int *);
 static WinResource *list_pe_resources (WinLibrary *, Win32ImageResourceDirectory *, int, int *);
 static int calc_vma_size (WinLibrary *);
-static void do_resources_recurs (WinLibrary *, WinResource *, WinResource *, WinResource *, WinResource *, char *, char *, char *, DoResourceCallback);
+static void do_resources_recurs (WinLibrary *, WinResource *, WinResource *, WinResource *, WinResource *, const char *, const char *, const char *, DoResourceCallback);
 static char *get_resource_id_quoted (WinResource *);
-static WinResource *find_with_resource_array(WinLibrary *, WinResource *, char *);
+static WinResource *find_with_resource_array(WinLibrary *, WinResource *, const char *);
 static WinResource *list_resources (WinLibrary *fi, WinResource *res, int *count);
-static bool compare_resource_id (WinResource *wr, char *id);
+static bool compare_resource_id (WinResource *wr, const char *id);
 
 /* Check whether access to a PE_SECTIONS is allowed */
 #define RETURN_IF_BAD_PE_SECTIONS(ret, module)                                              \
@@ -53,7 +53,7 @@ static bool compare_resource_id (WinResource *wr, char *id);
  */
 
 void
-do_resources (WinLibrary *fi, char *type, char *name, char *lang, DoResourceCallback cb)
+do_resources (WinLibrary *fi, const char *type, const char *name, const char *lang, DoResourceCallback cb)
 {
 	WinResource *type_wr;
 	WinResource *name_wr;
@@ -77,8 +77,8 @@ do_resources (WinLibrary *fi, char *type, char *name, char *lang, DoResourceCall
 
 static void
 do_resources_recurs (WinLibrary *fi, WinResource *base, WinResource *type_wr,
-                          WinResource *name_wr, WinResource *lang_wr,
-						  char *type, char *name, char *lang, DoResourceCallback cb)
+                     WinResource *name_wr, WinResource *lang_wr,
+                     const char *type, const char *name, const char *lang, DoResourceCallback cb)
 {
 	int c, rescnt;
 	WinResource *wr;
@@ -116,7 +116,7 @@ print_resources_callback (WinLibrary *fi, WinResource *wr,
                           WinResource *type_wr, WinResource *name_wr,
 						  WinResource *lang_wr)
 {
-	char *type, *offset;
+	const char *type, *offset;
 	int32_t id;
 	size_t size;
 
@@ -155,7 +155,7 @@ get_resource_id_quoted (WinResource *wr)
 }
 
 static bool
-compare_resource_id (WinResource *wr, char *id)
+compare_resource_id (WinResource *wr, const char *id)
 {
 	if (wr->numeric_id) {
 		int32_t cmp1, cmp2;
@@ -518,7 +518,7 @@ calc_vma_size (WinLibrary *fi)
 }
 
 static WinResource *
-find_with_resource_array(WinLibrary *fi, WinResource *wr, char *id)
+find_with_resource_array(WinLibrary *fi, WinResource *wr, const char *id)
 {
 	int c, rescnt;
 	WinResource *return_wr;

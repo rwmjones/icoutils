@@ -47,12 +47,12 @@ const char version_etc_copyright[] = "Copyright (C) 1998 Oskar Liljeblad";
 bool arg_raw;
 static FILE *verbose_file;
 static int arg_verbosity;
-static char *arg_output;
-static char *arg_type;
-static char *arg_name;
-static char *arg_language;
+static const char *arg_output;
+static const char *arg_type;
+static const char *arg_name;
+static const char *arg_language;
 static int arg_action;
-static char *res_types[] = {
+static const char *res_types[] = {
     /* 0x01: */
     "cursor", "bitmap", "icon", "menu", "dialog", "string",
     "fontdir", "font", "accelerator", "rcdata", "messagelist",
@@ -64,14 +64,14 @@ static char *res_types[] = {
 };
 #define RES_TYPE_COUNT ((int)(sizeof(res_types)/sizeof(char *)))
 
-static char *res_type_string_to_id (char *);
-static char *get_extract_extension (char *);
+static const char *res_type_string_to_id (const char *);
+static const char *get_extract_extension (const char *);
 
 /* res_type_id_to_string:
  *   Translate a numeric resource type to it's corresponding string type.
  *   (For informative-ness.)
  */
-char *
+const char *
 res_type_id_to_string (int id)
 {
     if (id == 241)
@@ -85,10 +85,10 @@ res_type_id_to_string (int id)
  *   Translate a resource type string to integer.
  *   (Used to convert the --type option.)
  */
-static char *
-res_type_string_to_id (char *type)
+static const char *
+res_type_string_to_id (const char *type)
 {
-    static char *res_type_ids[] = {
+    static const char *res_type_ids[] = {
 	"-1", "-2", "-3", "-4", "-5", "-6", "-7", "-8", "-9", "-10",
 	"-11", "-12", NULL, "-14", NULL, "-16", "-17", NULL, "-19",
 	"-20", "-21", "-22"
@@ -110,8 +110,8 @@ res_type_string_to_id (char *type)
  *   Return extension for files of a certain resource type
  *
  */
-static char *
-get_extract_extension (char *type)
+static const char *
+get_extract_extension (const char *type)
 {
     uint16_t value;
 
@@ -134,8 +134,8 @@ get_extract_extension (char *type)
 /* get_destination_name:
  *   Make a filename for a resource that is to be extracted.
  */
-char *
-get_destination_name (WinLibrary *fi, char *type, char *name, char *lang)
+const char *
+get_destination_name (WinLibrary *fi, const char *type, const char *name, const char *lang)
 {
     static char filename[1024];
 
