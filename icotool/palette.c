@@ -125,7 +125,12 @@ palette_lookup(Palette *palette, uint8_t r, uint8_t g, uint8_t b)
 {
 	PaletteColor color = { r, g, b, 0 };
 	PaletteColor *real_color = hmap_get(palette->map, &color);
-	return (real_color != NULL ? real_color->index : -1);
+	/* The caller doesn't handle this as an error, but simply
+	 * assigns 0xffffffff as a colour in the output.
+	 */
+	if (real_color == NULL)
+		return (uint32_t)-1;
+	return real_color->index;
 }
 
 uint32_t
