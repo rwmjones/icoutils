@@ -1,9 +1,23 @@
 *~
+*.o
+*.a
 
+.deps
+Makefile
 Makefile.in
 
 /aclocal.m4
 /autom4te.cache
+/config.h
 /config.h.in
+/config.log
+/config.status
 /configure
+/extresso/extresso
+/extresso/genresscript
+/icotool/icotool
+/icoutils.spec
 /mkinstalldirs
+/po/POTFILES
+/stamp-h1
+/wrestool/wrestool
