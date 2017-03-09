@@ -66,7 +66,7 @@ enum {
     CURSOR_OPT,
 };
 
-static char *short_opts = "xlco:i:w:h:p:b:X:Y:t:r:";
+static const char *short_opts = "xlco:i:w:h:p:b:X:Y:t:r:";
 static struct option long_opts[] = {
     { "extract",		no_argument,    	NULL, 'x' },
     { "list",			no_argument,		NULL, 'l' },
