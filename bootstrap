@@ -1,6 +1,58 @@
-#!/bin/sh
+#!/bin/bash
 
 set -e
+
+GNULIB_SRCDIR=${GNULIB_SRCDIR:-../gnulib}
+gnulib_tool=$GNULIB_SRCDIR/gnulib-tool
+
+if $gnulib_tool --version >/dev/null 2>&1; then
+    echo "Updating gnulib files from $GNULIB_SRCDIR"
+
+    $gnulib_tool \
+        --import \
+        --lib=libgnu \
+        --source-base=lib \
+        --m4-base=m4 \
+        --doc-base=. \
+        --tests-base=test \
+        --aux-dir=build-aux \
+        --no-conditional-dependencies \
+        --no-libtool \
+        --macro-prefix=gl \
+        byteswap \
+        configmake \
+        dirname \
+        dup2 \
+        getline \
+        getopt-gnu \
+        gettext \
+        gettimeofday \
+        lstat \
+        malloc-gnu \
+        memchr \
+        minmax \
+        progname \
+        stdbool \
+        stdint \
+        strcase \
+        strdup-posix \
+        strerror \
+        strndup \
+        strstr \
+        vasprintf \
+        version-etc \
+        xalloc \
+        xalloc-die \
+        xvasprintf
+else
+    echo "***"
+    echo "Warning: Not updating gnulib files"
+    echo "***"
+    echo "If you get errors in the lib/ directory, then check out gnulib"
+    echo "from git and set \$GNULIB_SRCDIR to point to that directory."
+    echo "If you have gnulib in ../gnulib then it will be used automatically."
+    echo "***"
+fi
 
 aclocal -I m4
 autoheader
