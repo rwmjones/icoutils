@@ -196,7 +196,7 @@ decode_pe_resource_id (WinLibrary *fi, WinResource *wr, uint32_t value)
 		wr->id[len] = '\0';
 	} else {					/* Unicode string id */
 		/* translate id into a string */
-		snprintf(wr->id, WINRES_ID_MAXLEN, "%d", value);
+		snprintf(wr->id, WINRES_ID_MAXLEN, "%" PRIu32, value);
 	}
 
 	wr->numeric_id = (value & IMAGE_RESOURCE_NAME_IS_STRING ? false:true);
