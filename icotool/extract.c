@@ -236,7 +236,7 @@ extract_icons(FILE *in, char *inname, bool listmode, ExtractNameGen outfile_gen,
 					offset += bitmap.size;
 
 					if (bitmap.clr_used != 0 || bitmap.bit_count < 24) {
-						palette_count = (bitmap.clr_used != 0 ? bitmap.clr_used : 1 << bitmap.bit_count);
+						palette_count = (bitmap.clr_used != 0 ? bitmap.clr_used : (uint32_t) (1 << bitmap.bit_count));
 						if (palette_count > 256) {
 							warn(_("palette too large"));
 							goto done;
@@ -319,13 +319,13 @@ extract_icons(FILE *in, char *inname, bool listmode, ExtractNameGen outfile_gen,
 
 					row = xmalloc(width * 4);
 
-					for (d = 0; d < height; d++) {
+					for (d = 0; d < (uint32_t) height; d++) {
 						uint32_t x;
 						uint32_t y = (bitmap.height < 0 ? d : height - d - 1);
 						uint32_t imod = y * (image_size / height) * 8 / bitmap.bit_count;
 						uint32_t mmod = y * (mask_size / height) * 8;
 
-						for (x = 0; x < width; x++) {
+						for (x = 0; x < (uint32_t) width; x++) {
 							uint32_t color = simple_vec(image_data, x + imod, bitmap.bit_count);
 
 							if (bitmap.bit_count <= 16) {
