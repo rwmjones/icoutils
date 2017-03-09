@@ -33,11 +33,12 @@
  *   Usually not called directly.
  */
 bool
-check_offset(char *memory, int total_size, char *name, void *offset, int size)
+check_offset(const char *memory, size_t total_size,
+             const char *name, const void *offset, size_t size)
 {
-	char* memory_end = memory + total_size;
-	char* block = (char*)offset;
-	char* block_end = offset + size;
+	const char* memory_end = memory + total_size;
+	const char* block = (const char*) offset;
+	const char* block_end = block + size;
 
 	/*debug("check_offset: size=%x vs %x offset=%x size=%x\n",
 		need_size, total_size, (char *) offset - memory, size);*/

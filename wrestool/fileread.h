@@ -33,6 +33,6 @@
 		return (r); \
 	}
 
-bool check_offset(char *, int, char *, void *, int);
+bool check_offset(const char *, size_t, const char *, const void *, size_t);
 
 #endif
