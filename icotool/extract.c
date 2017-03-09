@@ -21,6 +21,7 @@
 #include <stdint.h>		/* POSIX/Gnulib */
 #include <stdlib.h>		/* C89 */
 #include <stdio.h>		/* C89 */
+#include <inttypes.h>
 #if HAVE_PNG_H
 # include <png.h>
 #else
@@ -183,7 +184,7 @@ extract_icons(FILE *in, char *inname, bool listmode, ExtractNameGen outfile_gen,
 					matched++;
 
 					if (listmode) {
-						printf(_("--%s --index=%d --width=%d --height=%d --bit-depth=%d --palette-size=%d"),
+						printf(_("--%s --index=%d --width=%d --height=%d --bit-depth=%" PRIu32 " --palette-size=%" PRIu32),
 								(dir.type == 1 ? "icon" : "cursor"), completed, width, height,
 								bit_count, palette_count);
 						if (dir.type == 2)
@@ -352,7 +353,7 @@ extract_icons(FILE *in, char *inname, bool listmode, ExtractNameGen outfile_gen,
 					}
 
 					if (listmode) {
-						printf(_("--%s --index=%d --width=%d --height=%d --bit-depth=%d --palette-size=%d"),
+						printf(_("--%s --index=%d --width=%d --height=%d --bit-depth=%" PRIu32 " --palette-size=%" PRIu32),
 								(dir.type == 1 ? "icon" : "cursor"), completed, width, height,
 								bitmap.bit_count, palette_count);
 						if (dir.type == 2)
