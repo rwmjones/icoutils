@@ -27,4 +27,4 @@ AM_CPPFLAGS = \
   -I$(top_srcdir) \
   -I$(srcdir)/../icotool
 
-AM_CFLAGS = -Wall
+AM_CFLAGS = $(WARN_CFLAGS) $(WERROR_CFLAGS)

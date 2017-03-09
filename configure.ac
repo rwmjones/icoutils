@@ -23,6 +23,52 @@ m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
 # Gnulib
 gl_INIT
 
+# --enable-werror option for developers.
+AC_ARG_ENABLE([werror],
+    [AS_HELP_STRING([--enable-werror],
+                    [turn GCC warnings into errors (for developers)])],
+    [case $enableval in
+     yes|no) ;;
+     *)      AC_MSG_ERROR([bad value $enableval for werror option]) ;;
+     esac
+     gcc_werror=$enableval],
+    [gcc_werror=no]
+)
+if test "$gcc_werror" = "yes"; then
+    gl_WARN_ADD([-Werror], [WERROR_CFLAGS])
+    AC_SUBST([WERROR_CFLAGS])
+fi
+
+# $nw is the list of warnings we want to *disable*.  The nw warnings
+# are complemented below.
+nw=
+nw="$nw -Wvla"                    # Allow variable length arrays.
+nw="$nw -Wsuggest-attribute=pure" # Don't suggest function attributes.
+nw="$nw -Wsuggest-attribute=const"
+nw="$nw -Wsuggest-attribute=format"
+nw="$nw -Wstrict-prototypes"      # Don't require prototypes for every function.
+nw="$nw -Wmissing-prototypes"
+nw="$nw -Wmissing-declarations"
+nw="$nw -Wpacked"                 # Don't warn about packed structs.
+nw="$nw -Wswitch-default"         # This warning is actively dangerous.
+nw="$nw -Wunused-macros"          # Don't warn about defined but unused macros.
+
+gl_MANYWARN_ALL_GCC([ws])
+gl_MANYWARN_COMPLEMENT([ws], [$ws], $[nw])
+for w in $ws; do
+    gl_WARN_ADD([$w])
+done
+
+# Normally we disable warnings in $nw above.  However $nw only
+# filters out exact matching warning strings from a list inside
+# gnulib (see m4/manywarnings.m4).  So we need to explicitly list a
+# few disabled warnings below.
+
+# Allow unused function parameters.
+gl_WARN_ADD([-Wno-unused-parameter])
+
+AC_SUBST([WARN_CFLAGS])
+
 # Gettext
 AM_GNU_GETTEXT([external])
 # AM_GNU_GETTEXT_VERSION(0.14.1)

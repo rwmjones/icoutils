@@ -29,6 +29,7 @@ if $gnulib_tool --version >/dev/null 2>&1; then
         gettimeofday \
         lstat \
         malloc-gnu \
+        manywarnings \
         memchr \
         minmax \
         progname \

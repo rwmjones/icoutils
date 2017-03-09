@@ -27,4 +27,4 @@ AM_CPPFLAGS = \
 	-I$(top_builddir)/lib \
 	-I$(top_srcdir)/lib
 
-AM_CFLAGS = -Wall
+AM_CFLAGS = $(WARN_CFLAGS) $(WERROR_CFLAGS)
