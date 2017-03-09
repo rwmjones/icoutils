@@ -318,7 +318,7 @@ list_ne_name_resources (WinLibrary *fi, WinResource *typeres, int *count)
 static WinResource *
 list_ne_type_resources (WinLibrary *fi, int *count)
 {
-	int c, rescnt;
+	size_t c, rescnt;
 	WinResource *wr;
 	Win16NETypeInfo *typeinfo;
 
