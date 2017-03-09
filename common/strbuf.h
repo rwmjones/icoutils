@@ -28,16 +28,16 @@ typedef struct _StrBuf StrBuf;
 
 struct _StrBuf {
     char *buf;
-    uint32_t len;
-    uint32_t capacity;
+    size_t len;
+    size_t capacity;
 };
 
 void strbuf_free(StrBuf *sb);
 #define strbuf_free_to_string(sb)			strbuf_free_to_substring(sb,0,-1)
-char *strbuf_free_to_substring(StrBuf *sb, int32_t sp, int32_t ep);
+char *strbuf_free_to_substring(StrBuf *sb, ssize_t sp, ssize_t ep);
 
 StrBuf *strbuf_new(void);
-StrBuf *strbuf_new_with_capacity(uint32_t capacity);
+StrBuf *strbuf_new_with_capacity(size_t capacity);
 
 #define strbuf_new_from_char(chr)			strbuf_new_from_char_n(1,chr)
 #define strbuf_new_from_string(str) 	    	    	strbuf_new_from_substring(str,0,-1)
@@ -46,12 +46,12 @@ StrBuf *strbuf_new_with_capacity(uint32_t capacity);
 #define strbuf_new_from_substring(str,ssp,sep)		strbuf_new_from_substring_n(1,str,ssp,sep)
 #define strbuf_newf(fmt...)				strbuf_newf_n(1,fmt)
 #define strbuf_vnewf(fmt,ap)				strbuf_vnewf_n(1,fmt,ap)
-StrBuf *strbuf_new_from_char_n(uint32_t times, char ch);
+StrBuf *strbuf_new_from_char_n(size_t times, char ch);
 #define strbuf_new_from_string_n(n,str)			strbuf_new_from_substring_n(n,str,0,-1)
-StrBuf *strbuf_new_from_substring_n(uint32_t times, const char *str, int32_t sp, int32_t ep);
-StrBuf *strbuf_new_from_data_n(uint32_t times, const void *mem, uint32_t len);
-StrBuf *strbuf_newf_n(uint32_t times, const char *fmt, ...) __attribute__ ((format (printf, 2, 3)));
-StrBuf *strbuf_vnewf_n(uint32_t times, const char *fmt, va_list ap) __attribute__ ((format (printf, 2, 0)));
+StrBuf *strbuf_new_from_substring_n(size_t times, const char *str, ssize_t sp, ssize_t ep);
+StrBuf *strbuf_new_from_data_n(size_t times, const void *mem, size_t len);
+StrBuf *strbuf_newf_n(size_t times, const char *fmt, ...) __attribute__ ((format (printf, 2, 3)));
+StrBuf *strbuf_vnewf_n(size_t times, const char *fmt, va_list ap) __attribute__ ((format (printf, 2, 0)));
 
 #define strbuf_append_char(sb,chr)   	    	        strbuf_append_char_n(sb,1,chr)
 #define strbuf_append(sb,str) 	    	    	        strbuf_append_n(sb,1,str)
@@ -116,38 +116,38 @@ StrBuf *strbuf_vnewf_n(uint32_t times, const char *fmt, va_list ap) __attribute_
 #define strbuf_replace_char(sb,sp,ep,ch)                strbuf_replace_char_n(sb,sp,ep,1,ch)
 #define strbuf_replace(sb,sp,ep,str)	    	        strbuf_replace_n(sb,sp,ep,1,str)
 #define strbuf_replace_data(sb,sp,ep,mem,len)	    	strbuf_replace_data_n(sb,sp,ep,1,mem,len)
-void strbuf_replace_strbuf(StrBuf *sb, int32_t sp, int32_t ep, StrBuf *strbuf); /* or strbuf_replace_data_n(sb,sp,ep,1,strbuf_buffer(strbuf),strbuf_length(strbuf))*/
+void strbuf_replace_strbuf(StrBuf *sb, ssize_t sp, ssize_t ep, StrBuf *strbuf); /* or strbuf_replace_data_n(sb,sp,ep,1,strbuf_buffer(strbuf),strbuf_length(strbuf))*/
 #define strbuf_replace_substring(sb,sp,ep,str,ssp,sep)  strbuf_replace_substring_n(sb,sp,ep,1,str,ssp,sep)
 #define strbuf_replacef(sb,sp,ep,fmt...)                strbuf_replacef_n(sb,sp,ep,1,fmt)
 #define strbuf_vreplacef(sb,sp,ep,fmt,ap)               strbuf_vreplacef_n(sb,sp,ep,1,fmt,ap)
-void strbuf_replace_char_n(StrBuf *sb, int32_t sp, int32_t ep, uint32_t times, char ch);
+void strbuf_replace_char_n(StrBuf *sb, ssize_t sp, ssize_t ep, size_t times, char ch);
 #define strbuf_replace_n(sb,sp,ep,n,str)	    	strbuf_replace_substring_n(sb,sp,ep,n,str,0,-1)
-void strbuf_replace_substring_n(StrBuf *sb, int32_t sp, int32_t ep, uint32_t times, const char *str, int32_t ssp, int32_t sep);
-void strbuf_replace_data_n(StrBuf *sb, int32_t sp, int32_t ep, uint32_t times, const void *mem, uint32_t len);
-int strbuf_replacef_n(StrBuf *sb, int32_t sp, int32_t ep, uint32_t times, const char *fmt, ...) __attribute__ ((format (printf, 5, 6)));
-int strbuf_vreplacef_n(StrBuf *sb, int32_t sp, int32_t ep, uint32_t times, const char *fmt, va_list ap) __attribute__ ((format (printf, 5, 0)));
+void strbuf_replace_substring_n(StrBuf *sb, ssize_t sp, ssize_t ep, size_t times, const char *str, ssize_t ssp, ssize_t sep);
+void strbuf_replace_data_n(StrBuf *sb, ssize_t sp, ssize_t ep, size_t times, const void *mem, size_t len);
+int strbuf_replacef_n(StrBuf *sb, ssize_t sp, ssize_t ep, size_t times, const char *fmt, ...) __attribute__ ((format (printf, 5, 6)));
+int strbuf_vreplacef_n(StrBuf *sb, ssize_t sp, ssize_t ep, size_t times, const char *fmt, va_list ap) __attribute__ ((format (printf, 5, 0)));
 
-char strbuf_set_char_at(StrBuf *sb, int32_t sp, char chr); 	/* or strbuf_replace_char(sb,sp,strbuf_next_pos(sb,sp),chr) */
-char strbuf_delete_char(StrBuf *sb, int32_t sp); 		/* or strbuf_replace(sb,sp,strbuf_next_pos(sb,sp),NULL) */
+char strbuf_set_char_at(StrBuf *sb, ssize_t sp, char chr); 	/* or strbuf_replace_char(sb,sp,strbuf_next_pos(sb,sp),chr) */
+char strbuf_delete_char(StrBuf *sb, ssize_t sp); 		/* or strbuf_replace(sb,sp,strbuf_next_pos(sb,sp),NULL) */
 #define strbuf_delete(sb,sp,ep)   	    	        strbuf_replace(sb,sp,ep,NULL)
 #define strbuf_clear(sb)   	    	    	        strbuf_replace(sb,0,-1,NULL)
 
-void strbuf_reverse_substring(StrBuf *sb, int32_t sp, int32_t ep);
+void strbuf_reverse_substring(StrBuf *sb, ssize_t sp, ssize_t ep);
 #define strbuf_reverse(sb)  	    	    	        strbuf_reverse_substring(sb,0,-1)
 
-void strbuf_repeat_substring(StrBuf *sb, int32_t sp, int32_t ep, uint32_t times);
+void strbuf_repeat_substring(StrBuf *sb, ssize_t sp, ssize_t ep, size_t times);
 #define strbuf_repeat(sb,n)  	    	    	        strbuf_repeat_substring(sb,0,-1,n)
 
-uint32_t strbuf_length(StrBuf *sb);
-uint32_t strbuf_capacity(StrBuf *sb);
+size_t strbuf_length(StrBuf *sb);
+size_t strbuf_capacity(StrBuf *sb);
 char *strbuf_buffer(StrBuf *sb);
 #define strbuf_is_empty(sb)				(strbuf_length(sb) == 0)
 
-void strbuf_set_length(StrBuf *sb, uint32_t new_length);
-void strbuf_ensure_capacity(StrBuf *sb, uint32_t minimum_capacity); /* minimum_capacity should account for null-byte */
+void strbuf_set_length(StrBuf *sb, size_t new_length);
+void strbuf_ensure_capacity(StrBuf *sb, size_t minimum_capacity); /* minimum_capacity should account for null-byte */
 
-char *strbuf_substring(StrBuf *sb, int32_t sp, int32_t ep);
+char *strbuf_substring(StrBuf *sb, ssize_t sp, ssize_t ep);
 #define strbuf_to_string(sb)	    	    	        strbuf_substring(sb,0,-1)
-char strbuf_char_at(StrBuf *sb, int32_t index);
+char strbuf_char_at(StrBuf *sb, ssize_t index);
 
 #endif
