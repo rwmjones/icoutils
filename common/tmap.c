@@ -64,7 +64,12 @@ static TMapNode nil = { NULL, NULL, false, &nil, &nil, &nil };
 static int
 ptrcmp(const void *v0, const void *v1)
 {
-    return (int) (v0-v1);
+    if (v0 == v1)
+        return 0;
+    else if (v0 < v1)
+        return -1;
+    else
+        return 1;
 }
 
 static void
